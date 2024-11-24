@@ -8,17 +8,42 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- link CDN Fontawsome -->
-     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
+<style>
+  @layer base {
+    @font-face {
+      font-family: 'Roboto';
+      font-weight: 400;
+      src: url('https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxM.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Roboto';
+      font-weight: 700;
+      src: url('https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmWUlfBBc4AMP6lbBP.woff2') format('woff2');
+    }
+  }
+
+  @layer utilities {
+    .font-roboto {
+      font-family: 'Roboto', sans-serif;
+    }
+  }
+</style>
+
+
 <body>
     <!-- Navbar section-->
     <?php include 'components/fragments/navbar.php'; ?>
 
     <!-- Content section-->
-    <div class="container mx-auto mt-5">
+    <div class="content-wrapper ">
         <?php echo $content; ?>
     </div>
+
+    <!-- Footer section-->
+    <?php include 'components/fragments/footer.php'; ?>
 </body>
 </html>
