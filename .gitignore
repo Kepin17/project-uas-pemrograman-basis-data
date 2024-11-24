@@ -1,0 +1,43 @@
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment files
+.env
+.env.*
+
+# Composer dependencies
+/vendor/
+
+# Node.js dependencies (jika menggunakan Node.js untuk frontend)
+node_modules/
+
+# Temporary files
+/storage/cache/*
+/storage/logs/*
+*.log
+
+# Uploaded files
+/public/uploads/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# PHP-specific files
+*.php~
+*.bak
+*.tmp
+
+# Backup files
+*.bak
+*.old
+*.orig
+
+# Other system files
+*.lock
+*.tar.gz
+*.zip
