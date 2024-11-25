@@ -1,7 +1,19 @@
 <?php
-$title = 'Homepage';
-ob_start();
-include 'Pages/homepage.php';
-$content = ob_get_clean();
-include 'components/layouts/mainLayout.php';
+require_once "config/config.php";
+$req = trim($_SERVER['REQUEST_URI']);
+
+$basePath = "/project-uas/project-uas-pemrograman-basis-data";
+$req = str_replace(BASE_URL, '', $req);
+
+
+switch ($req) {
+  case '/':
+  case '':
+    require __DIR__ . "/src/views/homePage.php";
+    break;
+  default:
+    echo "404 - Page Not Found";
+    break;
+}
+
 ?>

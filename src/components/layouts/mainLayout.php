@@ -31,12 +31,33 @@
       font-family: 'Roboto', sans-serif;
     }
   }
-</style>
 
+  /* width */
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #159895; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #57C5B6; 
+}
+</style>
 
 <body>
     <!-- Navbar section-->
-    <?php include 'components/fragments/navbar.php'; ?>
+    <?php include "src/components/fragments/navbar.php"; ?>
 
     <!-- Content section-->
     <div class="content-wrapper ">
@@ -44,6 +65,6 @@
     </div>
 
     <!-- Footer section-->
-    <?php include 'components/fragments/footer.php'; ?>
+    <?php include 'src/components/fragments/footer.php'; ?>
 </body>
 </html>
