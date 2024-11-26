@@ -2,7 +2,6 @@
 require_once "config/config.php";
 $req = trim($_SERVER['REQUEST_URI']);
 
-$basePath = "/project-uas/project-uas-pemrograman-basis-data";
 $req = str_replace(BASE_URL, '', $req);
 
 

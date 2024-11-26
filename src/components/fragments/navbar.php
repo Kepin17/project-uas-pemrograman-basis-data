@@ -3,7 +3,7 @@
   $currentPage = str_replace(BASE_URL , "", "$_SERVER[REQUEST_URI]");
 ?>
 
-<nav class="navbar bg-[#1A5F7A] w-full h-20 h-20 flex items-center justify-between p-8 ">
+<nav class="navbar bg-[#1A5F7A] w-full h-20 h-20 flex items-center justify-between p-8 overflow-hidden">
         <div class="navbar-brand flex items-center">
           <a class="navbar-item text-2xl font-bold flex items-center gap-3 text-[#002B5B]" href="<?= BASE_URL?>">
           <i class="fa-solid fa-book text-[#57C5B6]"></i>
