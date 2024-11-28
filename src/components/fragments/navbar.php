@@ -15,8 +15,8 @@
           <ul class="navbar-menu flex items-center gap-7 text-[#002B5B] font-bold font-roboto">
             <li><a href="<?= BASE_URL?>" class="<?php echo $currentPage === "/" ? 'text-[#57C5B6]' : ''; ?>">Home</a></li>
             <li><a href="index.php" class="<?php echo $currentPage === 'About.php' ? 'text-[#57C5B6]' : ''; ?>">About</a></li>
-            <li><a href="index.php" class="<?php echo $currentPage === 'Contact.php' ? 'text-[#57C5B6]' : ''; ?>">Contact</a></li>
             <li><a href="index.php" class="<?php echo $currentPage === 'Literacy.php' ? 'text-[#57C5B6]' : ''; ?>">literacy Zone</a></li>
+            <li><a href="index.php" class="<?php echo $currentPage === 'Contact.php' ? 'text-[#57C5B6]' : ''; ?>">Contact</a></li>
           </ul>
 
           <div class="cta-wrapper flex items-center gap-8 font-roboto">
