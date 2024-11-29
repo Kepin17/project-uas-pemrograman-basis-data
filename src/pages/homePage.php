@@ -67,12 +67,42 @@
 
       <div class="content-wrapper flex gap-5 items-center">
         <aside class="sidebar w-[25rem] h-[60rem] bg-white my-5 rounded-md">
-          <h1>Sidebar</h1>
+          <form action="" class="p-10 flex flex-col gap-5">
+            <div class="form-wrap w-full h-10 flex items-center gap-5 ">
+              <input type="checkbox" name="genre" id="genre">
+              <label for="genre">Genre</label>
+            </div>
+              <div class="form-wrap w-full h-10 flex items-center gap-5 ">
+                <input type="checkbox" name="author" id="author">
+                <label for="author">Author</label>
+              </div>
+
+              <div class="form-wrap w-full h-10 flex items-center gap-5">
+                <input type="checkbox" name="publisher" id="publisher">
+                <label for="publisher">Publisher</label>
+              </div>
+
+              <div class="form-wrap w-full h-10 flex items-center gap-5 ">
+                <input type="checkbox" name="year" id="year">
+                <label for="year">Year</label>
+              </div>
+              <button class="cta-btn p-2 my-5 h-10 w-32 text-[#213A58] bg-[#80EE98] flex justify-center items-center font-bold rounded-md">Filter</button>
+          </form>
         </aside>
             <div class="listerasi-content w-full h-[60rem] bg-white my-5 rounded-md">
-              <div class="searchbar-wrapper w-full flex items-center gap-5 px-10">
-                <input type="text" placeholder="Search..." class="w-full text-white p-2 h-10 rounded-md bg-[#003161] focus:outline-none">
-                <button class="cta-btn p-2 my-5 h-10 w-32 text-[#213A58] bg-[#80EE98] flex justify-center items-center font-bold rounded-md">Search</button>
+              <div class="searchbar-wrapper w-full relative">
+                <div class="search flex items-center gap-5 px-10">
+                  <input type="text" placeholder="Search..." class="w-full text-white p-2 h-10 rounded-md bg-[#003161] focus:outline-none">
+                  <button class="cta-btn p-2 my-5 h-10 w-32 text-[#213A58] bg-[#80EE98] flex justify-center items-center font-bold rounded-md">Search</button>
+                </div>
+                
+                <!-- <div class="search-sugest-box w-full h-[30rem] bg-white absolute top-[4rem] border-2 py-4 px-10">
+                  <div class="sugest w-full h-10 flex flex-col gap-5 p-10 bg-slate-200 rounded-md">
+                     <div class="sugest-header">
+                      <h1>hehe</h1>
+                     </div>
+                  </div>
+                </div> -->
               </div>
 
               <div class="card-wrapper w-full h-[80%]">

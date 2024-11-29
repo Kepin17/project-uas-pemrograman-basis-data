@@ -11,6 +11,8 @@
           </a>
         </div>
 
+        
+
         <div class="items-wrapper flex items-center gap-8">
           <ul class="navbar-menu flex items-center gap-7 text-[#002B5B] font-bold font-roboto">
             <li><a href="<?= BASE_URL?>" class="<?php echo $currentPage === "/" ? 'text-[#57C5B6]' : ''; ?>">Home</a></li>
