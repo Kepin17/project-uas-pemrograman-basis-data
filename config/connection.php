@@ -1,10 +1,9 @@
 <?php 
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "manajemen_perpustakaan";
+require_once __DIR__ . '/config.php';
 
-$conn = new mysqli($host, $user, $pass, $dbname);
+$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
-if($conn->connect_error) return die("Connection failed: " . $conn->connect_error);
+if($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 ?>
