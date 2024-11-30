@@ -13,8 +13,8 @@ $page = $segments[0];
 
 // Define valid routes
 $routes = [
-    '' => '/src/views/homePage.php',
-    'register' => '/src/views/register.php',
+    '' => '/src/views/home.view.php',
+    'register' => '/src/views/register.view.php',
 ];
 
 // Check if route exists and load appropriate file
@@ -23,11 +23,9 @@ if (array_key_exists($page, $routes)) {
     if (file_exists($file_path)) {
         require $file_path;
     } else {
-        header("HTTP/1.0 404 Not Found");
-        echo "404 - File not found: {$routes[$page]}";
+        include "src/views/404.view.php";
     }
 } else {
-    header("HTTP/1.0 404 Not Found");
-    echo "404 - Page Not Found";
+    include "src/views/404.view.php";
 }
 ?>

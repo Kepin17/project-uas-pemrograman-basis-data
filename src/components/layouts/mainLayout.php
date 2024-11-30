@@ -8,7 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- link CDN Fontawsome -->
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
     <link rel="stylesheet" href="main.css">
@@ -59,8 +58,13 @@
 
 <body>
     <!-- Navbar section-->
-    <?php include "src/components/fragments/navbar.php"; ?>
+    <?php 
 
+    if (!in_array(CURRENT_PAGE, NAV_IGNORE)) {
+      include "src/components/fragments/navbar.php";
+    }
+    
+    ?>
     <!-- Content section-->
     <div class="content-wrapper ">
         <?php echo $content; ?>

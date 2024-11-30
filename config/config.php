@@ -16,4 +16,19 @@ define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'manajemen_perpustakaan');
+
+// get current Page
+$request_uri = $_SERVER['REQUEST_URI'];
+$base_url_path = parse_url(BASE_URL, PHP_URL_PATH);
+$current_path = str_replace($base_url_path, '', $request_uri);
+$current_path = trim($current_path, '/');
+
+// If it's the home page or empty path, set to index
+if (empty($current_path)) {
+    $current_path = 'index';
+}
+
+define('CURRENT_PAGE', $current_path);
+
+require_once "app_config.php"
 ?>
