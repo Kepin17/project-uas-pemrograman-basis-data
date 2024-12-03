@@ -1,5 +1,14 @@
 RewriteEngine On
 RewriteBase /project-uas/project-uas-pemrograman-basis-data/
+
+# Redirect from /admin/page to /admin/index.php?page=page
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^admin/([^/]+)/?$ src/pages/admin/index.php?page=$1 [QSA,L]
+
+# Redirect /admin to /admin/dashboard
+RewriteRule ^admin/?$ src/pages/admin/index.php?page=dashboard [L]
+
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.+)$ index.php [QSA,L]
