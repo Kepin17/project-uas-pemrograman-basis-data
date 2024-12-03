@@ -2,8 +2,8 @@
 
 // navIgnore
 $navIgnore = [
-    "login",
-    "register",
+    "auth/login",
+    "auth/register",
     
   ];
 

@@ -15,7 +15,7 @@ $req = trim($req, '/');
 
 // Split URL into segments
 $segments = !empty($req) ? explode('/', $req) : [''];
-$page = $segments[0];
+$page = implode('/', $segments);
 
 // Define valid routes with their corresponding files and allowed methods
 $routes = [
@@ -23,15 +23,29 @@ $routes = [
         'path' => '/src/views/home.view.php',
         'methods' => ['GET']
     ],
-    'register' => [
-        'path' => '/src/views/register.view.php',
-        'methods' => ['GET', 'POST']
+  
+    'maintenance' => [
+        'path' => '/src/views/maintenance.view.php',
+        'methods' => ['GET']
     ],
-    'login' => [
+  
+    'category-collection' => [
+        'path' => '/src/views/category.view.php',
+        'methods' => ['GET']
+    ],
+  
+    'book-collection' => [
+        'path' => '/src/views/books.view.php',
+        'methods' => ['GET']
+    ],
+    'auth/login' => [
         'path' => '/src/views/login.view.php',
         'methods' => ['GET', 'POST']
     ],
-    
+    'auth/register' => [
+        'path' => '/src/views/register.view.php',
+        'methods' => ['GET', 'POST']
+    ],
     'admin' => [
         'path' => '/src/pages/admin/index.php',
         'methods' => ['GET'],
