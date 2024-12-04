@@ -1,3 +1,5 @@
+<?php require_once __DIR__ . '/../../../../utils/phoneCodes.php'; ?>
+
 <!-- Header -->
 <div class="mb-8">
     <h2 class="text-2xl font-semibold text-gray-800">Users Management</h2>
@@ -6,7 +8,9 @@
 
 <!-- Action Buttons and Search -->
 <div class="flex justify-between items-center mb-6">
-    <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center">
+    <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center" 
+    onclick="addNewUser()"
+    >
         <i class="fas fa-plus mr-2"></i> Add User
     </button>
     <div class="relative">
@@ -56,7 +60,7 @@
                     </span>
                 </td>
                 <td class="px-6 py-4 text-sm font-medium">
-                    <button class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
+                    <button class="text-blue-600 hover:text-blue-900 mr-3" onclick="editUser()">Edit</button>
                     <button class="text-red-600 hover:text-red-900">Delete</button>
                 </td>
             </tr>
@@ -77,4 +81,19 @@
         <button class="px-3 py-1 border rounded hover:bg-gray-50">3</button>
         <button class="px-3 py-1 border rounded hover:bg-gray-50">Next</button>
     </div>
+
+    <?php require_once __DIR__ . '/addUser.php'; ?>
+    <?php require_once __DIR__ . '/editUser.php'; ?>
 </div>
+
+<script>
+    const addNewUser = () => {
+        const modal = document.getElementById('addUserModal');
+        modal.classList.remove('hidden');
+    }
+  
+    const editUser = () => {
+        const modal = document.getElementById('editUserModal');
+        modal.classList.remove('hidden');
+    }
+</script>

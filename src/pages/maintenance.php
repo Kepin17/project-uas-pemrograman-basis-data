@@ -1,5 +1,5 @@
 <?php
-$estimatedTime = "2 hours"; 
+$estimatedTime = "10 hours"; 
 ?>
 
     <style>
@@ -83,11 +83,5 @@ $estimatedTime = "2 hours";
             </button>
         </div>
     </div>
-    
-    <script>
-    // Add any additional JavaScript functionality here
-    document.addEventListener('DOMContentLoaded', function() {
-        // You can add countdown timer or other interactive features
-    });
-    </script>
+
 </div>

@@ -67,24 +67,48 @@
             </label>
         </div>
 
+        <?php require_once __DIR__ . '/../../../utils/phoneCodes.php'; ?>
         <div class="relative mt-4">
-            <input 
-                type="tel" 
-                name="phone" 
-                id="phone" 
-                required 
-                placeholder=" "
-                class="peer w-full h-12 bg-transparent border-b-2 border-gray-300 text-gray-900 focus:border-blue-500 focus:outline-none transition-colors duration-300"
-            />
-            <label 
-                for="phone" 
-                class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all 
-                peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
-                peer-placeholder-shown:top-3 peer-focus:-top-3.5 
-                peer-focus:text-blue-500 peer-focus:text-sm"
-            >
-                Phone Number
-            </label>
+            <div class="flex gap-2">
+                <div class="w-1/3">
+                    <select 
+                        name="phone_code" 
+                        id="phone_code" 
+                        required
+                        class="peer w-full h-12 bg-transparent border-b-2 border-gray-300 text-gray-900 focus:border-blue-500 focus:outline-none transition-colors duration-300"
+                    >
+                        <option value="">Select</option>
+                        <?php foreach($phoneCodes as $code => $country): ?>
+                            <option value="<?php echo $code; ?>"><?php echo $code . ' ' . $country; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <label 
+                        for="phone_code" 
+                        class="absolute left-0 -top-3.5 text-gray-600 text-sm"
+                    >
+                        Country Code
+                    </label>
+                </div>
+                <div class="w-2/3 relative">
+                    <input 
+                        type="tel" 
+                        name="phone" 
+                        id="phone" 
+                        required 
+                        placeholder=" "
+                        class="peer w-full h-12 bg-transparent border-b-2 border-gray-300 text-gray-900 focus:border-blue-500 focus:outline-none transition-colors duration-300"
+                    />
+                    <label 
+                        for="phone" 
+                        class="absolute left-0 -top-3.5 text-gray-600 text-sm transition-all 
+                        peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
+                        peer-placeholder-shown:top-3 peer-focus:-top-3.5 
+                        peer-focus:text-blue-500 peer-focus:text-sm"
+                    >
+                        Phone Number
+                    </label>
+                </div>
+            </div>
         </div>
 
         <div class="relative mt-4">
@@ -139,7 +163,7 @@
                 I agree to the 
                 <a href="#" class="text-blue-600 hover:text-blue-800 transition-colors">
                     Terms and Conditions
-                </a>
+                </a>                    
             </label>
         </div>
 

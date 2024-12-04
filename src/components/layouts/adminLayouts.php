@@ -34,15 +34,22 @@
                     </a>
                 </li>
                 <li>
-                    <a href="users" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group <?php echo $currentPage === 'users' ? 'bg-gray-600' : ''; ?>">
-                        <i class="fas fa-users w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"></i>
-                        <span class="ml-3">Users</span>
+                    <a href="staff" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group <?php echo $currentPage === 'organization' ? 'bg-gray-600' : ''; ?>">
+                        <i class="fas fa-users-cog w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"></i>
+                        <span class="ml-3">Staff</span>
+                    </a>
+                </li>
+               
+                <li>
+                    <a href="member" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group <?php echo $currentPage === 'organization' ? 'bg-gray-600' : ''; ?>">
+                        <i class="fas fa-users-cog w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"></i>
+                        <span class="ml-3">Member</span>
                     </a>
                 </li>
                 <li>
-                    <a href="staff" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group <?php echo $currentPage === 'staff' ? 'bg-gray-600' : ''; ?>">
-                        <i class="fas fa-user-tie w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"></i>
-                        <span class="ml-3">Staff</span>
+                    <a href="transactions" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group <?php echo $currentPage === 'transactions' ? 'bg-gray-600' : ''; ?>">
+                        <i class="fas fa-exchange-alt w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"></i>
+                        <span class="ml-3">Transactions</span>
                     </a>
                 </li>
             </ul>
