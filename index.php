@@ -15,12 +15,10 @@ $routes = [
     'categories' => __DIR__ . '/pages/Categories/categories.php',
     'shelves' => __DIR__ . '/pages/Shelves/shelves.php',
     'borrowing' => __DIR__ . '/pages/Borrowing/borrowing.php',
-    'returning' => __DIR__ . '/pages/Returning/returning.php',
+    'returning' => __DIR__ . '/pages/Pengembalian/pengembalian.php',
     'members' => __DIR__ . '/pages/Members/members.php',
     'staff' => __DIR__ . '/pages/Staff/staff.php',
-    'login' => __DIR__ . '/pages/Auth/Login/login.php',
-    'login_process.php' => __DIR__ . '/pages/Auth/Login/login_process.php',
-    'logout' => __DIR__ . '/pages/Auth/Login/logout.php'
+    'login' => __DIR__ . '/pages/Auth/Login/login.php'
 ];
 
 // Get the requested URL
@@ -43,27 +41,11 @@ if (empty($path)) {
 if (array_key_exists($path, $routes)) {
     $page = $routes[$path];
     
-    // Skip authentication check for login-related pages
-    $public_pages = ['login', 'login_process.php'];
-    
-    // Check if user needs to be logged in for this page
-    if (!in_array($path, $public_pages) && !isLoggedIn()) {
-        // Redirect to login page
-        header('Location: ' . BASE_URL . '/login');
-        exit;
-    }
-    
-    // If it's the login page and user is already logged in, redirect to dashboard
-    if ($path === 'login' && isLoggedIn()) {
-        header('Location: ' . BASE_URL . '/dashboard');
-        exit;
-    }
-    
     // Include the page
     require_once $page;
 } else {
     // Handle 404
     http_response_code(404);
-    echo '404 - Page Not Found';
+    include __DIR__ . '/pages/errors/404.php';
 }
 ?>
