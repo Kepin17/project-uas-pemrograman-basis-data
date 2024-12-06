@@ -2,6 +2,8 @@
 $pageTitle = "Manajemen Buku - Perpustakaan";
 $currentPage = 'books';
 
+$query = $conn->query("SELECT * FROM buku ORDER BY id_buku DESC") or die(mysqli_error($conn));
+
 ob_start();
 ?>
 

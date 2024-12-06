@@ -17,8 +17,11 @@ $routes = [
     'borrowing' => __DIR__ . '/pages/Borrowing/borrowing.php',
     'returning' => __DIR__ . '/pages/Pengembalian/pengembalian.php',
     'members' => __DIR__ . '/pages/Members/members.php',
+    'members/addMember' => __DIR__ . '/pages/Members/tambah.php',
+    'members/editMember' => __DIR__ . '/pages/Members/edit.php',
+    'members/deleteMember' => __DIR__ . '/pages/Members/hapus.php',
     'staff' => __DIR__ . '/pages/Staff/staff.php',
-    'login' => __DIR__ . '/pages/Auth/Login/login.php'
+    'login' => __DIR__ . '/pages/Auth/Login/login.php',
 ];
 
 // Get the requested URL

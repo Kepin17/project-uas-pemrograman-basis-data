@@ -1,6 +1,9 @@
 <?php
+require "config/connection.php";
 $pageTitle = "Kategori Buku - Perpustakaan";
 $currentPage = 'categories';
+
+$query = $conn->query("SELECT * FROM kategori_buku ORDER BY id_kategori DESC") or die(mysqli_error($conn));
 
 ob_start();
 ?>
@@ -26,19 +29,23 @@ ob_start();
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Nama Kategori</th>
-                            <th>Deskripsi</th>
-                            <th>Jumlah Buku</th>
-                            <th>Status</th>
+                            <!-- <th>Jumlah Buku</th> -->
+                            <!-- <th>Status</th> -->
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <?php
+                        $no = 1;
+                            while ($kategori = $query->fetch_assoc()){
+                        ?>
                         <tr>
-                            <td>Fiksi</td>
-                            <td>Buku-buku fiksi dan novel</td>
-                            <td>45</td>
-                            <td><span class="badge bg-success">Aktif</span></td>
+                            <td><?= $no++?></td>
+                            <td><?= $kategori['nama_kategori']?></td>
+                            <!-- <td>30</td> -->
+                            <!-- <td><span class="badge bg-success">Aktif</span></td> -->
                             <td>
                                 <div class="btn-group">
                                     <button class="btn btn-sm btn-info" onclick="showForm('edit')">
@@ -50,22 +57,7 @@ ob_start();
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td>Non-Fiksi</td>
-                            <td>Buku-buku non-fiksi dan dokumenter</td>
-                            <td>30</td>
-                            <td><span class="badge bg-success">Aktif</span></td>
-                            <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-sm btn-info" onclick="showForm('edit')">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="showForm('delete')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                        <?php } ?>
                     </tbody>
                 </table>
             </div>
