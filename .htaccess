@@ -1,5 +1,5 @@
 RewriteEngine On
-RewriteBase /perpustakaan/
+RewriteBase /project-uas/project-uas-pemrograman-basis-data/
 
 # Allow direct access to files
 RewriteCond %{REQUEST_FILENAME} !-f
