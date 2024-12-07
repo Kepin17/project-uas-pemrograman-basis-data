@@ -1,30 +1,47 @@
 <?php
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-    $query = $conn->query("SELECT * FROM rak WHERE id_rak = $id");
-    $rak = $query->fetch_assoc();
+require "config/connection.php";
+$pageTitle = "Edit Rak Buku";
+$currentPage = 'shelves';
 
-    if (isset($_POST['submit'])) {
-        $nama_rak = $_POST['nama_rak'];
-        $lokasi = $_POST['lokasi'];
-        $kapasitas = $_POST['kapasitas'];
+$kode_rak = $_GET['id'];
+$query = "SELECT * FROM rak_buku WHERE kode_rak = '$kode_rak'";
+$result = $conn->query($query);
+$data = $result->fetch_assoc();
 
-        $query = "UPDATE rak 
-                 SET nama_rak = '$nama_rak',
-                     lokasi = '$lokasi',
-                     kapasitas = $kapasitas
-                 WHERE id_rak = $id";
-        
-        if ($conn->query($query)) {
-            echo "<script>
-                    alert('Rak berhasil diupdate!');
-                    window.location.href = '?page=shelves';
-                  </script>";
-        } else {
-            echo "<script>
-                    alert('Error: " . $conn->error . "');
-                  </script>";
-        }
-    }
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nama_rak = $_POST['nama_rak'];
+
+    $query = "UPDATE rak_buku SET 
+              nama_rak = '$nama_rak'
+              WHERE kode_rak = '$kode_rak'";
+    $conn->query($query) or die(mysqli_error($conn));
+    header("Location: " . BASE_URL . "/shelves");
 }
+
+ob_start();
+?>
+
+<h4 class="mb-3">Edit Rak Buku</h4>
+<form method="POST">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Kode Rak</label>
+            <input type="text" name="kode_rak" class="form-control" value="<?php echo $data['kode_rak']; ?>" disabled>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Nama Rak</label>
+            <input type="text" name="nama_rak" class="form-control" value="<?php echo $data['nama_rak']; ?>" required>
+        </div>
+    </div>
+    <div class="mt-3">
+        <a href="<?php echo BASE_URL; ?>/shelves" class="btn btn-secondary">Batal</a>
+        <button type="submit" class="btn btn-primary">Update</button>
+    </div>
+</form>
+
+<?php
+$content = ob_get_clean();
+require_once(__DIR__ . '/../../layouts/main.php');
 ?>

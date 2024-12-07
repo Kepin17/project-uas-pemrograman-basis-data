@@ -5,12 +5,12 @@ $currentPage = 'members';
 
 function generateIdAnggota($conn) {
     // Query untuk mendapatkan ID anggota dengan nilai numerik terbesar
-    $query = "SELECT id_anggota FROM anggota ORDER BY CAST(SUBSTR(id_anggota, 3) AS UNSIGNED) DESC LIMIT 1";
+    $query = "SELECT id_anggota FROM anggota ORDER BY id_anggota DESC LIMIT 1";
     $result = $conn->query($query);
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        $lastId = $row['id_anggota'];
+        $lastId = $row['id_anggota']; 
         $number = (int) substr($lastId, 2); // Ambil angka setelah 'AG'
         $newNumber = $number + 1;          // Tambah 1
     } else {

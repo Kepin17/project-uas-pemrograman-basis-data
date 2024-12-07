@@ -1,4 +1,6 @@
 <?php
+require "config/connection.php";
+
 $pageTitle = "Manajemen Buku - Perpustakaan";
 $currentPage = 'books';
 
