@@ -164,6 +164,9 @@
             <a href="<?php echo BASE_URL; ?>/members" class="menu-item <?php echo $currentPage == 'members' ? 'active' : ''; ?>">
                 <i class="fas fa-users"></i> Anggota
             </a>
+            <a href="<?php echo BASE_URL; ?>/position" class="menu-item <?php echo $currentPage == 'position' ? 'active' : ''; ?>">
+                <i class="fas fa-user"></i> Jabatan
+            </a>
             <a href="<?php echo BASE_URL; ?>/staff" class="menu-item <?php echo $currentPage == 'staff' ? 'active' : ''; ?>">
                 <i class="fas fa-user-tie"></i> Staff
             </a>
