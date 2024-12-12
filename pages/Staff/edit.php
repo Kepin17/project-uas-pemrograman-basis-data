@@ -1,34 +1,67 @@
 <?php
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-    $query = $conn->query("SELECT * FROM staff WHERE id_staff = $id");
-    $staff = $query->fetch_assoc();
+require "config/connection.php";
+$pageTitle = "Edit Staff";
+$currentPage = 'staff';
 
-    if (isset($_POST['submit'])) {
-        $nama = $_POST['nama'];
-        $email = $_POST['email'];
-        $no_telp = $_POST['no_telp'];
-        $alamat = $_POST['alamat'];
-        $jabatan = $_POST['jabatan'];
+$id = $_GET['id'];
+$query = "SELECT * FROM petugas WHERE id_petugas = '$id'";
+$result = $conn->query($query);
+$data = $result->fetch_assoc();
 
-        $query = "UPDATE staff 
-                 SET nama = '$nama',
-                     email = '$email',
-                     no_telp = '$no_telp',
-                     alamat = '$alamat',
-                     jabatan = '$jabatan'
-                 WHERE id_staff = $id";
-        
-        if ($conn->query($query)) {
-            echo "<script>
-                    alert('Staff berhasil diupdate!');
-                    window.location.href = '?page=staff';
-                  </script>";
-        } else {
-            echo "<script>
-                    alert('Error: " . $conn->error . "');
-                  </script>";
-        }
-    }
+$jabatanQuery = "SELECT id_jabatan, nama_jabatan FROM jabatan";
+$jabatanResult = $conn->query($jabatanQuery) or die(mysqli_error($conn));
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nama_petugas = $_POST['nama_petugas'];
+    $email = $_POST['email'];
+    $nomor_telp = $_POST['nomor_telp'];
+    $id_jabatan = $_POST['id_jabatan'];
+
+    $query = "UPDATE petugas SET 
+              nama_petugas = '$nama_petugas', email = '$email', nomor_telp = '$nomor_telp', id_jabatan = '$id_jabatan'
+              WHERE id_petugas = '$id'";
+
+    $conn->query($query) or die(mysqli_error($conn));
+    header("Location: " . BASE_URL . "/staff");
 }
+
+ob_start();
+?>
+
+<h4 class="mb-3">Edit Buku</h4>
+<form method="POST">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Nama Petugas</label>
+            <input type="text" name="nama_petugas" value="<?= $data['nama_petugas'] ?>" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="text" name="email" value="<?= $data['email'] ?>" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Nomor Telepon</label>
+            <input type="text" name="nomor_telp" value="<?= $data['nomor_telp'] ?>" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Kategori</label>
+            <select name="id_jabatan" class="form-select" required>
+                <option value="" disabled>Pilih Kategori</option>
+                <?php while ($jabatan = $jabatanResult->fetch_assoc()) { ?>
+                    <option value="<?= htmlspecialchars($jabatan['id_jabatan']) ?>"
+                        <?= $jabatan['id_jabatan'] == $data['id_jabatan'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($jabatan['nama_jabatan']) ?>
+                    </option>
+                <?php } ?>
+            </select>
+        </div>
+        <div class="text-end mt-3">
+            <a href="<?php echo BASE_URL; ?>/staff" class="btn btn-secondary">Batal</a>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+</form>
+
+<?php
+$content = ob_get_clean();
+require_once(__DIR__ . '/../../layouts/main.php');
 ?>
