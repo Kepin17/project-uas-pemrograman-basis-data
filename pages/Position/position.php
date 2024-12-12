@@ -23,7 +23,7 @@ ob_start();
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th>ID</th>
                         <th>Jabatan</th>
                         <th>Aksi</th>
                     </tr>

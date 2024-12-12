@@ -67,10 +67,10 @@ ob_start();
                                 </div>
                             </td>
                             <td><?= date('d M Y', strtotime($buku['tahun_terbit'])) ?></td>
-                            <td><?= htmlspecialchars($buku['stok']) ?></td>
+                            <td><?= htmlspecialchars($buku['stok'] ?? '') ?></td>
                             <td>
-                                <div><i class="fas fa-list me-1"></i><?= htmlspecialchars($buku['nama_kategori']) ?></div>
-                                <small><i class="fas fa-table me-1"></i><?= htmlspecialchars($buku['kode_rak']) ?></small>
+                                <div><i class="fas fa-list me-1"></i><?= htmlspecialchars($buku['nama_kategori'] ?? '') ?></div>
+                                <small><i class="fas fa-table me-1"></i><?= htmlspecialchars($buku['kode_rak'] ?? '') ?></small>
                             </td>
                             <!-- <td><?= htmlspecialchars($buku['alamat']) ?></td> -->
                             <!-- <td><?= date('d M Y', strtotime($buku['created_at'])) ?></td> -->

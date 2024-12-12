@@ -44,14 +44,11 @@ $result = $conn->query($query);
                             <div><?= $row['nama_rak'] ?></div>
                         </div>
                     </div>
-                    <!-- <div class="mb-3">
-                        <small class="text-muted">Kategori</small>
-                        <div><?= htmlspecialchars($row['kategori']) ?></div>
+                 
+                    <div class="flex gap-2">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <?= htmlspecialchars($row['lokasi']) ?>
                     </div>
-                    <div>
-                        <small class="text-muted">Lokasi</small>
-                        <div><?= htmlspecialchars($row['lokasi']) ?></div>
-                    </div> -->
                 </div>
             </div>
         </div>
