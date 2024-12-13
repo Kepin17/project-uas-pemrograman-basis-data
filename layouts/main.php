@@ -11,8 +11,8 @@
     <!-- Custom CSS -->
     <style>
         :root {
-            --primary-color: #673ab7; /* Deep Purple */
-            --secondary-color: #512da8; /* Darker Purple */
+            --primary-color:rgb(16, 8, 31); /* Deep Purple */
+            --secondary-color:rgb(19, 10, 40); /* Darker Purple */
             --accent-color: #ff4081; /* Light Pink */
             --text-color: #2c3e50;
             --sidebar-width: 280px;
@@ -139,8 +139,10 @@
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
+       
         <div class="sidebar-header">
             <h4>Perpustakaan</h4>
+            <p class="text-white-50">Selamat datang di sistem perpustakaan</p>
         </div>
         <div class="sidebar-menu">
             <a href="<?php echo BASE_URL; ?>/dashboard" class="menu-item <?php echo $currentPage == 'dashboard' ? 'active' : ''; ?>">

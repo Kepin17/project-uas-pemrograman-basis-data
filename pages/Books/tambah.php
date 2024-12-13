@@ -29,12 +29,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $id_buku = generateIdBuku($conn);
   $nama_buku = $_POST['nama_buku'];
   $tahun_terbit = $_POST['tahun_terbit'];
-  $stok = $_POST['stok'];
+  $stok = max(1, (int)$_POST['stok']); // Ensure stock is at least 1
   $id_kategori = $_POST['id_kategori'];
   $kode_rak = $_POST['kode_rak'];
+  $nama_penulis = $_POST['nama_penulis'];
+  $nama_penerbit = $_POST['nama_penerbit'];
 
-  $query = "INSERT INTO buku (id_buku, nama_buku, tahun_terbit, stok, id_kategori, kode_rak) 
-        VALUES ('$id_buku', '$nama_buku', '$tahun_terbit', '$stok', '$id_kategori', '$kode_rak')";
+  $query = "INSERT INTO buku (id_buku, nama_buku, tahun_terbit, stok, id_kategori, kode_rak, nama_penulis, nama_penerbit) 
+        VALUES ('$id_buku', '$nama_buku', '$tahun_terbit', '$stok', '$id_kategori', '$kode_rak', '$nama_penulis', '$nama_penerbit')";
 
   if ($conn->query($query)) {
     header("Location: " . BASE_URL . "/books?success=menambahkan buku");
@@ -60,7 +62,7 @@ ob_start();
     </div>
     <div class="col-md-6">
       <label class="form-label">Stok</label>
-      <input type="number" name="stok" class="form-control" required>
+      <input type="number" name="stok" id="stock" class="form-control" value="1" min="1" required>
     </div>
     <div class="col-md-6">
       <label class="form-label" for="">Kategori</label>
@@ -84,6 +86,16 @@ ob_start();
       <?php endwhile; ?>
       </select>
     </div>
+    
+    <div class="col-md-6">
+      <label class="form-label">Nama Penulis</label>
+      <input type="text" name="nama_penulis" class="form-control" required>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Nama Penerbit</label>
+      <input type="text" name="nama_penerbit" class="form-control" required>
+    </div>
   </div>
   <div class="text-end mt-3">
     <a href="<?php echo BASE_URL; ?>/books" class="btn btn-secondary">Batal</a>
@@ -91,13 +103,19 @@ ob_start();
   </div>
 </form>
 
+<script>
+  document.getElementById('stock').addEventListener('input', function() {
+    if (this.value < 1) {
+      this.value = 1;
+    }
+  });
+</script>
+
 <?php
 $content = ob_get_clean();
 require_once(__DIR__ . '/../../layouts/main.php');
 ?>
 
 <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
-<script>
-  alert('Buku berhasil ditambahkan!');
-</script>
+
 <?php endif; ?>

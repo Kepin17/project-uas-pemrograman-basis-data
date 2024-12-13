@@ -39,13 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ob_start();
 ?>
 
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>">Dashboard</a></li>
-    <li class="breadcrumb-item"><a href="<?php echo BASE_URL; ?>/shelves">Rak Buku</a></li>
-    <li class="breadcrumb-item active">Tambah Rak</li>
-  </ol>
-</nav>
+
 
 <div class="container-fluid px-4">
   <div class="row">

@@ -1,239 +1,188 @@
 <?php
+require_once('config/connection.php');
+
+// Count queries
+$totalBooksQuery = "SELECT COUNT(*) as total FROM buku";
+$totalMembersQuery = "SELECT COUNT(*) as total FROM anggota";
+$totalBorrowingsQuery = "SELECT COUNT(*) as total FROM peminjaman";
+
+$totalBooksResult = mysqli_query($conn, $totalBooksQuery);
+$totalMembersResult = mysqli_query($conn, $totalMembersQuery);
+$totalBorrowingsResult = mysqli_query($conn, $totalBorrowingsQuery);
+
+$totalBooks = mysqli_fetch_assoc($totalBooksResult)['total'];
+$totalMembers = mysqli_fetch_assoc($totalMembersResult)['total'];
+$totalBorrowings = mysqli_fetch_assoc($totalBorrowingsResult)['total'];
+
 $pageTitle = "Dashboard - Perpustakaan";
 $currentPage = 'dashboard';
 
 ob_start();
 ?>
 
-<div class="main-header d-flex justify-content-between align-items-center">
-    <h4 class="mb-0">Dashboard</h4>
-    <div class="d-flex align-items-center">
-        <span class="me-2"><?php echo date('d M Y'); ?></span>
-        <div class="btn-group">
-            <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-user-circle me-1"></i> Admin
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
-                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="/pages/Auth/Login/logout.php">
-                    <i class="fas fa-sign-out-alt me-2"></i> Logout
-                </a></li>
-            </ul>
-        </div>
-    </div>
-</div>
+<!-- Custom CSS for white theme with shadows -->
+<style>
+    .btn-white {
+        background-color: white;
+        border-color: #ced4da;
+        color: #495057;
+    }
+    .btn-white:hover {
+        background-color: #e9ecef;
+        border-color: #ced4da;
+    }
+    .card-white {
+        background-color: white;
+        color: #495057;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .bg-white {
+        background-color: white;
+    }
+    .bg-light-white {
+        background-color: #f8f9fa;
+    }
+</style>
 
-<!-- Statistics Cards -->
-<div class="row g-4 mb-4">
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0 me-3">
-                        <div class="avatar avatar-xl bg-primary bg-opacity-10 rounded">
-                            <i class="fas fa-book fa-2x text-primary"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">Total Buku</h6>
-                        <h3 class="mb-0">150</h3>
-                        <small class="text-success">
-                            <i class="fas fa-arrow-up me-1"></i>12% dari bulan lalu
-                        </small>
+<div class="container-fluid px-4">
+    <div class="row g-4 mb-4">
+        <!-- Header Stats -->
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm h-100 card-white">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Total Buku</h6>
+                    <h3 class="mb-0"><?php echo $totalBooks; ?></h3>
+                    <div class="small text-success mt-2">
+                        <i class="fas fa-book"></i> Total semua buku
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0 me-3">
-                        <div class="avatar avatar-xl bg-success bg-opacity-10 rounded">
-                            <i class="fas fa-users fa-2x text-success"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">Total Anggota</h6>
-                        <h3 class="mb-0">50</h3>
-                        <small class="text-success">
-                            <i class="fas fa-arrow-up me-1"></i>8% dari bulan lalu
-                        </small>
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm h-100 card-white">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Total Anggota</h6>
+                    <h3 class="mb-0"><?php echo $totalMembers; ?></h3>
+                    <div class="small text-primary mt-2">
+                        <i class="fas fa-users"></i> Total semua anggota
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0 me-3">
-                        <div class="avatar avatar-xl bg-warning bg-opacity-10 rounded">
-                            <i class="fas fa-hand-holding fa-2x text-warning"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">Peminjaman Aktif</h6>
-                        <h3 class="mb-0">25</h3>
-                        <small class="text-muted">
-                            <i class="fas fa-equals me-1"></i>Sama dengan bulan lalu
-                        </small>
+        <div class="col-12 col-md-4">
+            <div class="card border-0 shadow-sm h-100 card-white">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Total Peminjaman</h6>
+                    <h3 class="mb-0"><?php echo $totalBorrowings; ?></h3>
+                    <div class="small text-danger mt-2">
+                        <i class="fas fa-book"></i> Total semua peminjaman
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0 me-3">
-                        <div class="avatar avatar-xl bg-danger bg-opacity-10 rounded">
-                            <i class="fas fa-clock fa-2x text-danger"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">Keterlambatan</h6>
-                        <h3 class="mb-0">5</h3>
-                        <small class="text-danger">
-                            <i class="fas fa-arrow-up me-1"></i>2 dari minggu lalu
-                        </small>
-                    </div>
+    <!-- Recent Borrowings Table -->
+    <div class="card border-0 shadow-sm card-white">
+        <div class="card-header bg-light-white py-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="mb-0">Peminjaman Terbaru</h5>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- Recent Activities -->
-<div class="row">
-    <!-- Recent Borrowings -->
-    <div class="col-12 col-xl-6 mb-4">
-        <div class="card h-100">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Peminjaman Terbaru</h5>
-                <button class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus me-1"></i> Tambah Baru
-                </button>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Anggota</th>
-                                <th>Buku</th>
-                                <th>Tanggal Pinjam</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img src="https://ui-avatars.com/api/?name=John+Doe" class="rounded-circle me-2" width="32">
-                                        John Doe
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light-white">
+                        <tr>
+                            <th class="border-0">Peminjam</th>
+                            <th class="border-0">Buku</th>
+                            <th class="border-0">Tanggal Pinjam</th>
+                            <th class="border-0">Tanggal Kembali</th>
+                            <th class="border-0">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $recentBorrowingsQuery = "SELECT peminjaman.*, 
+                                                         anggota.nama_anggota,
+                                                         buku.nama_buku
+                                                  FROM peminjaman 
+                                                  JOIN anggota ON peminjaman.id_anggota = anggota.id_anggota
+                                                  JOIN buku ON peminjaman.id_buku = buku.id_buku
+                                                  ORDER BY peminjaman.tanggal_pinjam DESC
+                                                  LIMIT 5";
+                        $recentBorrowingsResult = mysqli_query($conn, $recentBorrowingsQuery);
+                        while($borrowing = mysqli_fetch_assoc($recentBorrowingsResult)) { ?>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center py-2">
+                                    <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($borrowing['nama_anggota']); ?>&background=random" 
+                                         class="rounded-circle me-3" width="40" height="40">
+                                    <div>
+                                        <div class="fw-semibold"><?php echo $borrowing['nama_anggota']; ?></div>
+                                        <div class="text-muted small">ID: <?php echo $borrowing['id_anggota']; ?></div>
                                     </div>
-                                </td>
-                                <td>Harry Potter</td>
-                                <td>20 Dec 2023</td>
-                                <td><span class="badge bg-success">Active</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img src="https://ui-avatars.com/api/?name=Jane+Smith" class="rounded-circle me-2" width="32">
-                                        Jane Smith
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <div class="fw-semibold"><?php echo $borrowing['nama_buku']; ?></div>
+                                        <div class="text-muted small">ID: <?php echo $borrowing['id_buku']; ?></div>
                                     </div>
-                                </td>
-                                <td>Lord of the Rings</td>
-                                <td>19 Dec 2023</td>
-                                <td><span class="badge bg-warning">Due Soon</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-nowrap">
+                                    <?php echo date('d M Y', strtotime($borrowing['tanggal_pinjam'])); ?>
+                                    <div class="text-muted small"><?php echo date('l', strtotime($borrowing['tanggal_pinjam'])); ?></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-nowrap">
+                                    <?php echo date('d M Y', strtotime($borrowing['estimasi_pinjam'])); ?>
+                                    <div class="text-muted small"><?php echo date('l', strtotime($borrowing['estimasi_pinjam'])); ?></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column align-items-start">
+                                    <?php
+                                    switch ($borrowing['status']) {
+                                        case "DIPINJAM":
+                                            echo '<span class="badge bg-success-subtle text-success">Dipinjam</span>';
+                                            break;
+                                        case "TERLAMBAT":
+                                            echo '<span class="badge bg-warning-subtle text-warning">Terlambat</span>';
+                                            break;
+                                        case "DIKEMBALIKAN":
+                                            echo '<span class="badge bg-info-subtle text-info">Dikembalikan</span>';
+                                            break;
+                                    }
+                                    ?>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
-
-    <!-- Popular Books -->
-    <div class="col-12 col-xl-6 mb-4">
-        <div class="card h-100">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Buku Terpopuler</h5>
-                <div class="dropdown">
-                    <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        Bulan Ini
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Minggu Ini</a></li>
-                        <li><a class="dropdown-item" href="#">Bulan Ini</a></li>
-                        <li><a class="dropdown-item" href="#">Tahun Ini</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Buku</th>
-                                <th>Kategori</th>
-                                <th>Total Peminjaman</th>
-                                <th>Rating</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img src="https://via.placeholder.com/32x48" class="me-2">
-                                        Harry Potter
-                                    </div>
-                                </td>
-                                <td>Fiksi</td>
-                                <td>25</td>
-                                <td>
-                                    <div class="text-warning">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star-half-alt"></i>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img src="https://via.placeholder.com/32x48" class="me-2">
-                                        Lord of the Rings
-                                    </div>
-                                </td>
-                                <td>Fiksi</td>
-                                <td>20</td>
-                                <td>
-                                    <div class="text-warning">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="card-footer bg-light-white border-0 py-3">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#"><i class="fas fa-chevron-left"></i></a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>

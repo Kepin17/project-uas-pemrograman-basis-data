@@ -58,9 +58,23 @@ ob_start();
     });
 </script>
 
+<style>
+      .btn-pink {
+        background-color: #ff69b4;
+        color:rgb(255, 255, 255);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    .btn-pink:hover {
+        background-color: #ff85c1;
+        color:rgb(255, 255, 255);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+</style>
+
 <div class="main-header d-flex justify-content-between align-items-center">
     <h4 class="mb-0">Petugas Perpustakaan</h4>
-    <a href="<?php echo BASE_URL; ?>/staff/addStaff" class="btn btn-success" onclick="return confirmAction('add', '<?php echo BASE_URL; ?>/staff/addStaff');">
+    <a href="<?php echo BASE_URL; ?>/staff/addStaff" class="btn btn-pink" onclick="return confirmAction('add', '<?php echo BASE_URL; ?>/staff/addStaff');">
         <i class="fas fa-plus me-2"></i>Tambah Petugas
     </a>
 </div>

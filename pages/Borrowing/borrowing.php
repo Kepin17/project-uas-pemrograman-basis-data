@@ -37,32 +37,30 @@ $peminjamanQuery = "SELECT peminjaman.*,
                     JOIN petugas ON peminjaman.id_petugas = petugas.id_petugas";
 $peminjamanResult = mysqli_query($conn, $peminjamanQuery);
 
-
 ob_start();
 ?>
 
-<!-- Custom CSS for pink and purple theme -->
+<!-- Custom CSS for white theme with shadows -->
 <style>
-    .btn-pink {
-        background-color: #ff69b4;
-        border-color: #ff69b4;
-        color: white;
+    .btn-white {
+        background-color: white;
+        border-color: #ced4da;
+        color: #495057;
     }
-    .btn-pink:hover {
-        background-color: #ff85c1;
-        border-color: #ff85c1;
+    .btn-white:hover {
+        background-color: #e9ecef;
+        border-color: #ced4da;
     }
-    .card-pink {
-        background-color: #ffb6c1;
+    .card-white {
+        background-color: white;
+        color: #495057;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     }
-    .card-purple {
-        background-color: #dda0dd;
+    .bg-white {
+        background-color: white;
     }
-    .bg-light-pink {
-        background-color: #ffe4e1;
-    }
-    .bg-light-purple {
-        background-color: #e6e6fa;
+    .bg-light-white {
+        background-color: #f8f9fa;
     }
 </style>
 
@@ -70,7 +68,7 @@ ob_start();
     <div class="row g-4 mb-4">
         <!-- Header Stats -->
         <div class="col-12 col-md-4">
-            <div class="card border-0 shadow-sm h-100 card-pink">
+            <div class="card border-0 shadow-sm h-100 card-white">
                 <div class="card-body">
                     <h6 class="text-muted mb-2">Total Peminjaman</h6>
                     <h3 class="mb-0"><?php echo $totalPeminjaman; ?></h3>
@@ -81,7 +79,7 @@ ob_start();
             </div>
         </div>
         <div class="col-12 col-md-4">
-            <div class="card border-0 shadow-sm h-100 card-purple">
+            <div class="card border-0 shadow-sm h-100 card-white">
                 <div class="card-body">
                     <h6 class="text-muted mb-2">Sedang Dipinjam</h6>
                     <h3 class="mb-0"><?php echo $sedangDipinjam; ?></h3>
@@ -92,7 +90,7 @@ ob_start();
             </div>
         </div>
         <div class="col-12 col-md-4">
-            <div class="card border-0 shadow-sm h-100 card-pink">
+            <div class="card border-0 shadow-sm h-100 card-white">
                 <div class="card-body">
                     <h6 class="text-muted mb-2">Terlambat</h6>
                     <h3 class="mb-0"><?php echo $terlambat; ?></h3>
@@ -105,7 +103,7 @@ ob_start();
     </div>
 
     <!-- Search and Filter -->
-    <div class="card border-0 shadow-sm mb-4 card-purple">
+    <div class="card border-0 shadow-sm mb-4 card-white">
         <div class="card-body">
             <div class="row g-3">
                 <div class="col-12 col-md-5">
@@ -128,7 +126,7 @@ ob_start();
                     <input type="date" class="form-control">
                 </div>
                 <div class="col-12 col-md-2 d-grid">
-                    <button class="btn btn-pink">
+                    <button class="btn btn-white">
                         <i class="fas fa-filter me-2"></i>Filter
                     </button>
                 </div>
@@ -137,14 +135,14 @@ ob_start();
     </div>
 
     <!-- Borrowing Table -->
-    <div class="card border-0 shadow-sm card-pink">
-        <div class="card-header bg-light-pink py-3">
+    <div class="card border-0 shadow-sm card-white">
+        <div class="card-header bg-light-white py-3">
             <div class="row align-items-center">
                 <div class="col">
                     <h5 class="mb-0">Daftar Peminjaman</h5>
                 </div>
                 <div class="col text-end">
-                    <button class="btn btn-pink" data-bs-toggle="modal" data-bs-target="#modalPeminjamanBaru">
+                    <button class="btn btn-white" data-bs-toggle="modal" data-bs-target="#modalPeminjamanBaru">
                         <i class="fas fa-plus me-2"></i>Peminjaman Baru
                     </button>
                 </div>
@@ -153,7 +151,7 @@ ob_start();
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light-purple">
+                    <thead class="bg-light-white">
                         <tr>
                             <th class="border-0">Peminjam</th>
                             <th class="border-0">Buku</th>
@@ -233,7 +231,7 @@ ob_start();
                 </table>
             </div>
         </div>
-        <div class="card-footer bg-light-pink border-0 py-3">
+        <div class="card-footer bg-light-white border-0 py-3">
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center mb-0">
                     <li class="page-item disabled">
@@ -260,7 +258,7 @@ require_once(__DIR__ . '/../../layouts/main.php');
 <div class="modal fade" id="modalPeminjamanBaru" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-light-pink">
+            <div class="modal-header bg-white">
                 <h5 class="modal-title">Peminjaman Baru</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
@@ -301,9 +299,9 @@ require_once(__DIR__ . '/../../layouts/main.php');
                         <input type="date" name="estimasi_pinjam" class="form-control" required>
                     </div>
                 </div>
-                <div class="modal-footer bg-light-pink">
+                <div class="modal-footer bg-white">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-pink">Simpan</button>
+                    <button type="submit" class="btn btn-white">Simpan</button>
                 </div>
             </form>
         </div>

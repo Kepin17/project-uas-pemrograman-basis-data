@@ -6,6 +6,17 @@ $currentPage = 'books';
 $search = isset($_GET['search']) ? $conn->real_escape_string(trim($_GET['search'])) : '';
 $successMessage = isset($_GET['success']) ? $_GET['success'] : '';
 
+// Pagination settings
+$limit = 5;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+// Count total records
+$countQuery = "SELECT COUNT(*) as total FROM buku";
+$countResult = $conn->query($countQuery);
+$totalRecords = $countResult->fetch_assoc()['total'];
+$totalPages = ceil($totalRecords / $limit);
+
 $query = "SELECT buku.*, kategori_buku.nama_kategori FROM buku LEFT JOIN kategori_buku ON buku.id_kategori = kategori_buku.id_kategori";
 
 if (!empty($search)) {
@@ -14,7 +25,7 @@ if (!empty($search)) {
       OR buku.kode_rak LIKE '%$search%')";
 }
 
-$query .= " ORDER BY buku.id_buku DESC";
+$query .= " ORDER BY buku.id_buku DESC LIMIT $limit OFFSET $offset";
 
 $result = $conn->query($query) or die(mysqli_error($conn));
 
@@ -25,16 +36,53 @@ ob_start();
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 
-<!-- Custom CSS for pink button -->
+<!-- Custom CSS for white theme with shadows -->
 <style>
+    .btn-white {
+        background-color: white;
+        border-color: #ced4da;
+        color: #495057;
+    }
+    .btn-white:hover {
+        background-color: #e9ecef;
+        border-color: #ced4da;
+    }
+    .card-white {
+        background-color: white;
+        color: #495057;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
     .btn-pink {
         background-color: #ff69b4;
-        border-color: #ff69b4;
-        color: white;
+        color:rgb(255, 255, 255);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     }
+
     .btn-pink:hover {
         background-color: #ff85c1;
-        border-color: #ff85c1;
+        color:rgb(255, 255, 255);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .bg-white {
+        background-color: white;
+    }
+    .bg-light-white {
+        background-color: #f8f9fa;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #343a40;
+        border-color: #343a40;
+        color: #ffff;
+    }
+    .pagination .page-item .page-link {
+        color: #343a40;
+    }
+    .pagination {
+        margin-top: 20px;
+    }
+    .table th, .table td {
+        width: 20%;
     }
 </style>
 
@@ -80,7 +128,7 @@ ob_start();
     </a>
 </div>
 
-<div class="card my-3">
+<div class="card my-3 card-white">
     <div class="card-body">
         <form method="GET" action="<?php echo BASE_URL; ?>/books">
             <div class="input-group">
@@ -93,11 +141,11 @@ ob_start();
     </div>
 </div>
 
-<div class="card mt-4">
+<div class="card mt-4 card-white">
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-hover">
-                <thead>
+                <thead class="bg-light-white">
                     <tr>
                         <th>Nama Buku</th>
                         <th>Tahun terbit</th>
@@ -142,6 +190,23 @@ ob_start();
         </div>
     </div>
 </div>
+
+<!-- Pagination Controls -->
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <li class="page-item <?php if($page <= 1) echo 'disabled'; ?>">
+            <a class="page-link" href="<?php if($page > 1) echo '?page=' . ($page - 1); ?>">Previous</a>
+        </li>
+        <?php for($i = 1; $i <= $totalPages; $i++): ?>
+            <li class="page-item <?php if($page == $i) echo 'active'; ?>">
+                <a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a>
+            </li>
+        <?php endfor; ?>
+        <li class="page-item <?php if($page >= $totalPages) echo 'disabled'; ?>">
+            <a class="page-link" href="<?php if($page < $totalPages) echo '?page=' . ($page + 1); ?>">Next</a>
+        </li>
+    </ul>
+</nav>
 
 <?php
 $content = ob_get_clean();
