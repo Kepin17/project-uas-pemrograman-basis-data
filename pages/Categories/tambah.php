@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $query = "INSERT INTO kategori_buku (id_kategori, nama_kategori) VALUES ('$id_kategori', '$nama_kategori')";
 
   if ($conn->query($query)) {
-    header("Location: " . BASE_URL . "/categories");
+    header("Location: " . BASE_URL . "/categories?success=menambahkan kategori");
     exit;
   } else {
     die("Gagal menambahkan kategori: " . $conn->error);

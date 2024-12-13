@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               VALUES ('$id_anggota', '$nama', '$email', '$nomor_telp', '$alamat')";
 
     if ($conn->query($query)) {
-        header("Location: " . BASE_URL . "/members"); // Redirect ke halaman utama
+        header("Location: " . BASE_URL . "/members?success=menambahkan anggota"); // Redirect ke halaman utama
         exit;
     } else {
         die("Gagal menambahkan anggota: " . $conn->error);

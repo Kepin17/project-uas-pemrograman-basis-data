@@ -29,11 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $query = "INSERT INTO rak_buku (kode_rak, nama_rak, lokasi) VALUES ('$kode_rak', '$nama_rak', '$lokasi')";
 
   if ($conn->query($query)) {
-    header("Location: " . BASE_URL . "/shelves");
+    header("Location: " . BASE_URL . "/shelves?success=menambah Rak");
     exit;
-  } else {
-    die("Gagal menambahkan rak: " . $conn->error);
-  }
+} else {
+    die("Gagal menambahkan Rak: " . $conn->error);
+}
 }
 
 ob_start();

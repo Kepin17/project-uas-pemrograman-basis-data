@@ -11,15 +11,15 @@
     <!-- Custom CSS -->
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #3498db;
+            --primary-color: #673ab7; /* Deep Purple */
+            --secondary-color: #512da8; /* Darker Purple */
+            --accent-color: #ff4081; /* Light Pink */
             --text-color: #2c3e50;
             --sidebar-width: 280px;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', sans-serif;
             background-color: #f8f9fa;
             color: var(--text-color);
         }
@@ -31,7 +31,7 @@
             left: 0;
             height: 100vh;
             width: var(--sidebar-width);
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             transition: all 0.3s ease;
             z-index: 1000;
@@ -131,8 +131,8 @@
         }
 
         .btn-primary:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
+            background-color: #d81b60;
+            border-color: #d81b60;
         }
     </style>
 </head>

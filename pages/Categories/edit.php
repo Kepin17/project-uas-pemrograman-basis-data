@@ -15,7 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               nama_kategori = '$nama_kategori'
               WHERE id_kategori = '$id_kategori'";
     $conn->query($query) or die(mysqli_error($conn));
-    header("Location: " . BASE_URL . "/categories");
+    if ($conn->query($query)) {
+        header("Location: " . BASE_URL . "/categories?success=menambahkan buku");
+        exit;
+      } else {
+        die("Gagal menambahkan buku: " . $conn->error);
+      }
 }
 
 ob_start();

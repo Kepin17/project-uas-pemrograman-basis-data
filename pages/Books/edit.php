@@ -25,8 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               nama_buku = '$nama_buku', tahun_terbit = '$tahun_terbit', stok = '$stok', id_kategori = '$id_kategori', kode_rak = '$kode_rak'
               WHERE id_buku = '$id'";
 
-    $conn->query($query) or die(mysqli_error($conn));
-    header("Location: " . BASE_URL . "/books");
+if ($conn->query($query)) {
+    header("Location: " . BASE_URL . "/books?success=mengdit buku");
+    exit;
+  } else {
+    die("Gagal edit buku: " . $conn->error);
+  }
 }
 
 ob_start();

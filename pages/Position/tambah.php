@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $query = "INSERT INTO jabatan (id_jabatan, nama_jabatan) VALUES ('$id_jabatan', '$nama_jabatan')";
 
     if ($conn->query($query)) {
-        header("Location: " . BASE_URL . "/position");
+        header("Location: " . BASE_URL . "/position?success=menambahkan jabatan");
         exit;
     } else {
         die("Gagal menambahkan jabatan: " . $conn->error);

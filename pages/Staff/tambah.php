@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               VALUES ('$id_anggota', '$nama', '$email', '$nomor_telp')";
 
     if ($conn->query($query)) {
-        header("Location: " . BASE_URL . "/staff");
+        header("Location: " . BASE_URL . "/staff?success=menambahkan staff");
         exit;
     } else {
         die("Gagal menambahkan staff: " . $conn->error);

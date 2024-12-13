@@ -18,7 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               nama_anggota = '$nama', email = '$email', nomor_telp = '$nomor_telp', alamat = '$alamat'
               WHERE id_anggota = '$id'";
     $conn->query($query) or die(mysqli_error($conn));
-    header("Location: " . BASE_URL . "/members");
+    if ($conn->query($query)) {
+        header("Location: " . BASE_URL . "/members?success=menambahkan anggota");
+        exit;
+      } else {
+        die("Gagal menambahkan kategori: " . $conn->error);
+      }
+    
 }
 
 ob_start();

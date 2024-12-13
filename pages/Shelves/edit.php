@@ -15,7 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               nama_rak = '$nama_rak'
               WHERE kode_rak = '$kode_rak'";
     $conn->query($query) or die(mysqli_error($conn));
-    header("Location: " . BASE_URL . "/shelves");
+    if ($conn->query($query)) {
+        header("Location: " . BASE_URL . "/shelves?success=menambahkan Rak");
+        exit;
+    } else {
+        die("Gagal menambahkan Rak: " . $conn->error);
+    }
 }
 
 ob_start();

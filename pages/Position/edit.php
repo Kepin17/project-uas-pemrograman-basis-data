@@ -13,7 +13,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $query = "UPDATE jabatan SET nama_jabatan = '$nama_jabatan' WHERE id_jabatan = '$id'";
     $conn->query($query) or die(mysqli_error($conn));
-    header("Location: " . BASE_URL . "/position");
+    if ($conn->query($query)) {
+        header("Location: " . BASE_URL . "/position?success=mengdit jabatan"); // Redirect ke halaman utama
+        exit;
+    } else {
+        die("Gagal menambahkan jabatan: " . $conn->error);
+    }
 }
 
 ob_start();

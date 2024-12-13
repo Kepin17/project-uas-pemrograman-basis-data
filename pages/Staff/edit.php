@@ -22,7 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               WHERE id_petugas = '$id'";
 
     $conn->query($query) or die(mysqli_error($conn));
-    header("Location: " . BASE_URL . "/staff");
+    if ($conn->query($query)) {
+        header("Location: " . BASE_URL . "/staff?success=mengedit staff");
+        exit;
+    } else {
+        die("Gagal mengedit staff: " . $conn->error);
+    }
 }
 
 ob_start();
