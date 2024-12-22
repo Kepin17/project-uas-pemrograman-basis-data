@@ -4,7 +4,6 @@ $pageTitle = "Pengembalian Buku";
 $currentPage = "returning";
 ob_start();
 
-// Fetch active loans
 $query = "SELECT p.kode_pinjam, m.nama_anggota as nama, b.nama_buku as judul 
           FROM peminjaman p 
           JOIN anggota m ON p.id_anggota = m.id_anggota 
@@ -13,25 +12,6 @@ $query = "SELECT p.kode_pinjam, m.nama_anggota as nama, b.nama_buku as judul
           ORDER BY p.kode_pinjam DESC";
 $result = $conn->query($query) or die(mysqli_error($conn));
 
-// Fetch loan details if a peminjam is selected
-$detail_peminjaman = null;
-if (isset($_POST['peminjaman_id'])) {
-    $kode_pinjam = $_POST['peminjaman_id'];
-    $query_detail = "SELECT p.*, m.nama_anggota, b.nama_buku,
-                     DATEDIFF(CURRENT_DATE, p.estimasi_pinjam) as keterlambatan
-                     FROM peminjaman p 
-                     JOIN anggota m ON p.id_anggota = m.id_anggota
-                     JOIN buku b ON p.id_buku = b.id_buku
-                     WHERE p.kode_pinjam = ?";
-    
-    $stmt = $conn->prepare($query_detail);
-    $stmt->bind_param("s", $kode_pinjam);
-    $stmt->execute();
-    $detail_peminjaman = $stmt->get_result()->fetch_assoc();
-    
-    // Calculate late fee
-    $denda_terlambat = max(0, $detail_peminjaman['keterlambatan']) * 2000;
-}
 ?>
 
 <div class="container-fluid">
@@ -43,13 +23,13 @@ if (isset($_POST['peminjaman_id'])) {
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                    <form id="returnForm" method="POST">
+                    <form id="returnForm">
                         <div class="mb-3">
                             <label for="peminjaman_id" class="form-label">Pilih Peminjam</label>
-                            <select class="form-select" id="peminjaman_id" name="peminjaman_id" required onchange="this.form.submit()">
+                            <select class="form-select" id="peminjaman_id" name="peminjaman_id" required>
                                 <option value="">Pilih Peminjam</option>
                                 <?php while($row = mysqli_fetch_assoc($result)) { ?>
-                                    <option value="<?= $row['kode_pinjam'] ?>" <?= (isset($_POST['peminjaman_id']) && $_POST['peminjaman_id'] == $row['kode_pinjam']) ? 'selected' : '' ?>>
+                                    <option value="<?= $row['kode_pinjam'] ?>">
                                         <?= $row['kode_pinjam'] ?> - <?= $row['nama'] ?> (<?= $row['judul'] ?>)
                                     </option>
                                 <?php } ?>
@@ -69,20 +49,20 @@ if (isset($_POST['peminjaman_id'])) {
                         <div class="mb-3">
                             <label class="form-label">Detail Peminjaman</label>
                             <div id="detailPeminjaman" class="border rounded p-3 bg-light">
-                                <p class="mb-2">Nama Peminjam: <span><?= $detail_peminjaman ? $detail_peminjaman['nama_anggota'] : '-' ?></span></p>
-                                <p class="mb-2">Judul Buku: <span><?= $detail_peminjaman ? $detail_peminjaman['nama_buku'] : '-' ?></span></p>
-                                <p class="mb-2">Tanggal Pinjam: <span><?= $detail_peminjaman ? date('d F Y', strtotime($detail_peminjaman['tanggal_pinjam'])) : '-' ?></span></p>
-                                <p class="mb-2">Batas Kembali: <span><?= $detail_peminjaman ? date('d F Y', strtotime($detail_peminjaman['estimasi_pinjam'])) : '-' ?></span></p>
-                                <p class="mb-2">Keterlambatan: <span><?= $detail_peminjaman ? ($detail_peminjaman['keterlambatan'] > 0 ? $detail_peminjaman['keterlambatan'].' hari' : 'Tidak terlambat') : '-' ?></span></p>
+                                <p class="mb-2">Nama Peminjam: <span id="detail_nama">-</span></p>
+                                <p class="mb-2">Judul Buku: <span id="detail_buku">-</span></p>
+                                <p class="mb-2">Tanggal Pinjam: <span id="detail_tgl_pinjam">-</span></p>
+                                <p class="mb-2">Batas Kembali: <span id="detail_batas_kembali">-</span></p>
+                                <p class="mb-2">Keterlambatan: <span id="detail_terlambat">-</span></p>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Rincian Biaya</label>
                             <div id="rincianBiaya" class="border rounded p-3 bg-light">
-                                <p class="mb-2">Denda Keterlambatan: <span>Rp <?= $detail_peminjaman ? number_format($denda_terlambat, 0, ',', '.') : '0' ?></span></p>
+                                <p class="mb-2">Denda Keterlambatan: <span id="denda_terlambat">Rp 0</span></p>
                                 <p class="mb-2">Denda Kondisi: <span id="denda_kondisi">Rp 0</span></p>
-                                <p class="fw-bold mb-0">Total Denda: <span id="total_denda">Rp <?= $detail_peminjaman ? number_format($denda_terlambat, 0, ',', '.') : '0' ?></span></p>
+                                <p class="fw-bold mb-0">Total Denda: <span id="total_denda">Rp 0</span></p>
                             </div>
                         </div>
 

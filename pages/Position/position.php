@@ -3,6 +3,8 @@ require "config/connection.php";
 $pageTitle = "Manajemen Jabatan - Perpustakaan";
 $currentPage = 'position';
 
+$successMessage = isset($_GET['success']) ? $_GET['success'] : '';
+
 $query = "SELECT * from jabatan ORDER BY id_jabatan DESC";
 
 $data = $conn->query($query) or die(mysqli_error($conn));
@@ -55,7 +57,7 @@ ob_start();
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        const successMessage = "<?php echo isset($_GET['success']) ? $_GET['success'] : ''; ?>";
+        const successMessage = "<?php echo $successMessage; ?>";
         if (successMessage) {
             showSuccessMessage(successMessage);
         }

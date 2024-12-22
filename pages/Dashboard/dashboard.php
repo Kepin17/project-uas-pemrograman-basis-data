@@ -105,15 +105,20 @@ ob_start();
                     </thead>
                     <tbody>
                         <?php
-                        $recentBorrowingsQuery = "SELECT peminjaman.*, 
-                                                         anggota.nama_anggota,
-                                                         buku.nama_buku
-                                                  FROM peminjaman 
-                                                  JOIN anggota ON peminjaman.id_anggota = anggota.id_anggota
-                                                  JOIN buku ON peminjaman.id_buku = buku.id_buku
-                                                  ORDER BY peminjaman.tanggal_pinjam DESC
-                                                  LIMIT 5";
-                        $recentBorrowingsResult = mysqli_query($conn, $recentBorrowingsQuery);
+                        $query = "SELECT p.*, 
+                                  a.nama_anggota,
+                                  pg.nama_petugas,
+                                  b.nama_buku,
+                                  b.stok,
+                                  dp.qty
+                                  FROM PEMINJAMAN p
+                                  LEFT JOIN DETAIL_PEMINJAMAN dp ON p.kode_pinjam = dp.kode_pinjam
+                                  LEFT JOIN ANGGOTA a ON p.id_anggota = a.id_anggota 
+                                  LEFT JOIN PETUGAS pg ON p.id_petugas = pg.id_petugas
+                                  LEFT JOIN BUKU b ON dp.id_buku = b.id_buku
+                                  WHERE p.status != 'DIKEMBALIKAN'
+                                  ORDER BY p.tanggal_pinjam DESC";
+                        $recentBorrowingsResult = mysqli_query($conn, $query);
                         while($borrowing = mysqli_fetch_assoc($recentBorrowingsResult)) { ?>
                         <tr>
                             <td>
