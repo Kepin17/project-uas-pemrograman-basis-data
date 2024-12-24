@@ -9,6 +9,7 @@ CREATE TABLE ANGGOTA (
     alamat VARCHAR (50) NOT NULL,
     nomor_telp VARCHAR(12) NOT NULL,
     email VARCHAR(89) NOT NULL UNIQUE,
+    password VARCHAR(225) NOT NULL,
     CONSTRAINT CheckTabelAnggota1 CHECK (LENGTH(id_anggota) = 5),
     CONSTRAINT CheckTabelAnggota2 CHECK (id_anggota REGEXP "^AG[0-9]{3}$")
 );
@@ -124,7 +125,6 @@ CREATE TABLE PEMINJAMAN (
     id_buku VARCHAR(6),
     tanggal_pinjam DATETIME DEFAULT CURRENT_TIMESTAMP,
     estimasi_pinjam DATETIME,
-    total_buku INT DEFAULT 0,
     status ENUM('DIPINJAM', 'TERLAMBAT', 'DIKEMBALIKAN') NOT NULL DEFAULT 'DIPINJAM',
     CONSTRAINT CheckTabelPeminjaman1 CHECK (LENGTH(kode_pinjam) = 5),
     CONSTRAINT CheckTabelPeminjaman2 CHECK (kode_pinjam REGEXP "^PJ[0-9]{3}$"),
@@ -135,39 +135,18 @@ CREATE TABLE PEMINJAMAN (
 
 desc PEMINJAMAN;
 
+-- DROP TABLE IF EXISTS PENGEMBALIAN;
+
 CREATE TABLE PENGEMBALIAN (
     kode_pengembalian VARCHAR(6) UNIQUE NOT NULL PRIMARY KEY,
     tanggal_pengembalian DATETIME,
-    denda INT,
+    kode_pinjam VARCHAR(6),
+    kondisi_buku ENUM('bagus', 'rusak', 'hilang') NOT NULL DEFAULT 'bagus',
+    denda double(10,2),
     CONSTRAINT CheckTabelPengembalian1 CHECK (LENGTH(kode_pengembalian) = 5),
     CONSTRAINT CheckTabelPengembalian2 CHECK (kode_pengembalian REGEXP "^PB[0-9]{3}$"),
-    CONSTRAINT CheckTabelPengembalian3 CHECK (denda >= 0)
+    CONSTRAINT FK_peminjaman FOREIGN KEY (kode_pinjam) REFERENCES PEMINJAMAN(kode_pinjam) ON DELETE CASCADE
 );
-
-ALTER TABLE PENGEMBALIAN
-ADD kode_pinjam VARCHAR(6);
-
-ALTER TABLE PENGEMBALIAN
-ADD CONSTRAINT FK_peminjaman
-FOREIGN KEY (kode_pinjam)
-REFERENCES PEMINJAMAN(kode_pinjam)
-ON DELETE CASCADE;
-
-ALTER TABLE PENGEMBALIAN
-ADD id_petugas VARCHAR(6);
-
-ALTER TABLE PENGEMBALIAN
-ADD CONSTRAINT FK_petugasp
-FOREIGN KEY (id_petugas)
-REFERENCES PETUGAS(id_petugas)
-ON DELETE CASCADE;
-
--- Add kondisi_buku column to PENGEMBALIAN table
-ALTER TABLE PENGEMBALIAN
-ADD COLUMN kondisi_buku ENUM('bagus', 'rusak', 'hilang') NOT NULL DEFAULT 'bagus';
-
--- Update existing records if needed
-UPDATE PENGEMBALIAN SET kondisi_buku = 'bagus' WHERE kondisi_buku IS NULL;
 
 desc PENGEMBALIAN;
 
@@ -224,53 +203,41 @@ BEGIN
 END//
 DELIMITER ;
 
--- Create DETAIL_PEMINJAMAN table
+
 CREATE TABLE DETAIL_PEMINJAMAN (
     id INT AUTO_INCREMENT PRIMARY KEY,
     kode_pinjam VARCHAR(6),
     id_buku VARCHAR(6),
-    qty INT DEFAULT 1,
+    kondisi_buku_pinjam ENUM('bagus', 'rusak') NOT NULL DEFAULT 'bagus',
     FOREIGN KEY (kode_pinjam) REFERENCES PEMINJAMAN(kode_pinjam) ON DELETE CASCADE,
-    FOREIGN KEY (id_buku) REFERENCES BUKU(id_buku) ON DELETE CASCADE,
-    CONSTRAINT check_qty CHECK (qty > 0)
+    FOREIGN KEY (id_buku) REFERENCES BUKU(id_buku) ON DELETE CASCADE
 );
 
--- Recreate triggers for stock management
+-- Create trigger to decrease book stock when loan detail is added
 DELIMITER //
-
-CREATE TRIGGER after_detail_pinjam_insert
-AFTER INSERT ON DETAIL_PEMINJAMAN
-FOR EACH ROW
-BEGIN
-    -- Update book stock
-    UPDATE BUKU SET 
-        stok = stok - NEW.qty
-    WHERE id_buku = NEW.id_buku;
-    
-    -- Update total books in peminjaman
-    UPDATE PEMINJAMAN SET
-        total_buku = total_buku + NEW.qty
-    WHERE kode_pinjam = NEW.kode_pinjam;
-END//
-
 CREATE TRIGGER before_detail_pinjam_insert
 BEFORE INSERT ON DETAIL_PEMINJAMAN
 FOR EACH ROW
 BEGIN
-    DECLARE available_stock INT;
+    UPDATE BUKU SET stok = stok - 1 WHERE id_buku = NEW.id_buku;
+END//
+DELIMITER ;
+
+-- Create trigger to track book status
+DELIMITER //
+CREATE TRIGGER after_detail_pinjam_insert 
+AFTER INSERT ON DETAIL_PEMINJAMAN
+FOR EACH ROW 
+BEGIN
+    DECLARE current_stok INT;
+    SELECT stok INTO current_stok FROM BUKU WHERE id_buku = NEW.id_buku;
     
-    -- Check stock availability
-    SELECT stok INTO available_stock
-    FROM BUKU
-    WHERE id_buku = NEW.id_buku;
-    
-    IF available_stock < NEW.qty THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Stok buku tidak mencukupi';
+    IF current_stok <= 0 THEN
+        UPDATE BUKU SET status = 'DIPINJAM' WHERE id_buku = NEW.id_buku;
     END IF;
 END//
-
 DELIMITER ;
+
 
 -- Insert data into JABATAN
 INSERT INTO JABATAN (id_jabatan, nama_jabatan) VALUES
@@ -348,44 +315,3 @@ INSERT INTO BUKU (id_buku, nama_buku, tahun_terbit, stok, id_kategori, kode_rak,
 ('BK009', 'Pedagogy of the Oppressed', '1968-01-01', 10, 'KB009', 'RB009', 'Paulo Freire', 'Continuum'),
 ('BK010', 'The China Study', '2004-01-01', 10, 'KB010', 'RB010', 'T. Colin Campbell', 'BenBella Books');
 
--- Insert complete PEMINJAMAN records first
-INSERT INTO PEMINJAMAN (kode_pinjam, id_anggota, id_petugas, id_buku, tanggal_pinjam, estimasi_pinjam, total_buku) VALUES
-('PJ001', 'AG001', 'PG001', 'BK001', '2023-01-01', '2023-01-15', 2),
-('PJ002', 'AG002', 'PG002', 'BK002', '2023-01-02', '2023-01-16', 1),
-('PJ003', 'AG003', 'PG003', 'BK003', '2023-01-03', '2023-01-17', 1),
-('PJ004', 'AG004', 'PG004', 'BK004', '2023-01-04', '2023-01-18', 1),
-('PJ005', 'AG005', 'PG005', 'BK005', '2023-01-05', '2023-01-19', 1),
-('PJ006', 'AG006', 'PG006', 'BK006', '2023-01-06', '2023-01-20', 1),
-('PJ007', 'AG007', 'PG007', 'BK007', '2023-01-07', '2023-01-21', 1),
-('PJ008', 'AG008', 'PG008', 'BK008', '2023-01-08', '2023-01-22', 1),
-('PJ009', 'AG009', 'PG009', 'BK009', '2023-01-09', '2023-01-23', 1),
-('PJ010', 'AG010', 'PG010', 'BK010', '2023-01-10', '2023-01-24', 1);
-
--- Now insert PENGEMBALIAN records
-INSERT INTO PENGEMBALIAN (kode_pengembalian, tanggal_pengembalian, denda, kode_pinjam, id_petugas) VALUES
-('PB001', '2023-01-15', 0, 'PJ001', 'PG001'),
-('PB002', '2023-01-16', 10000, 'PJ002', 'PG002'),
-('PB003', '2023-01-17', 0, 'PJ003', 'PG003'),
-('PB004', '2023-01-18', 0, 'PJ004', 'PG004'),
-('PB005', '2023-01-19', 99000, 'PJ005', 'PG005'),
-('PB006', '2023-01-20', 0, 'PJ006', 'PG006'),
-('PB007', '2023-01-21', 0, 'PJ007', 'PG007'),
-('PB008', '2023-01-22', 0, 'PJ008', 'PG008'),
-('PB009', '2023-01-23', 0, 'PJ009', 'PG009'),
-('PB010', '2023-01-24', 0, 'PJ010', 'PG010');
-
--- Insert DETAIL_PEMINJAMAN records for existing peminjaman
-INSERT INTO DETAIL_PEMINJAMAN (kode_pinjam, id_buku, qty) VALUES
-('PJ001', 'BK001', 1),
-('PJ001', 'BK002', 1), -- PJ001 has 2 books
-('PJ002', 'BK002', 1),
-('PJ003', 'BK003', 1),
-('PJ004', 'BK004', 1),
-('PJ005', 'BK005', 1),
-('PJ006', 'BK006', 1),
-('PJ007', 'BK007', 1),
-('PJ008', 'BK008', 1),
-('PJ009', 'BK009', 1),
-('PJ010', 'BK010', 1);
-
--- Update peminjaman table if needed

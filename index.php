@@ -32,16 +32,8 @@ $protected_routes = [
     'shelves/addShelve' => __DIR__ . '/pages/Shelves/tambah.php',
     'shelves/editShelve' => __DIR__ . '/pages/Shelves/edit.php',
     'shelves/deleteShelve' => __DIR__ . '/pages/Shelves/hapus.php',
-    'borrowing' => __DIR__ . '/pages/Borrowing/borrowing.php',
-    'borrowing/addBorrowing' => __DIR__ . '/pages/Borrowing/tambah.php',
-    'borrowing/editBorrowing' => __DIR__ . '/pages/Borrowing/edit.php',
-    'borrowing/deleteBorrowing' => __DIR__ . '/pages/Borrowing/hapus.php',
-    'borrowing/process/proses_tambah' => __DIR__ . '/pages/Borrowing/proses_tambah.php',
     'returning' => __DIR__ . '/pages/Pengembalian/pengembalian.php',
-    'returning/pross' => __DIR__ . '/pages/Pengembalian/process_return.php',
-    
-
-
+    'returning/pross' => __DIR__ . '/pages/Pengembalian/process_pengembalian.php',
     'members' => __DIR__ . '/pages/Members/members.php',
     'members/addMember' => __DIR__ . '/pages/Members/tambah.php',
     'members/editMember' => __DIR__ . '/pages/Members/edit.php',
@@ -54,11 +46,9 @@ $protected_routes = [
     'staff/addStaff' => __DIR__ . '/pages/Staff/tambah.php',
     'staff/editStaff' => __DIR__ . '/pages/Staff/edit.php',
     'staff/deleteStaff' => __DIR__ . '/pages/Staff/hapus.php',
-    
-    // Simplified peminjaman routes
     'peminjaman' => __DIR__ . '/pages/Peminjaman/index.php',
-    'peminjaman/process' => __DIR__ . '/pages/Peminjaman/process_peminjaman.php',
-    'peminjaman/add-selected-book' => __DIR__ . '/pages/Peminjaman/add_selected_book.php',
+    'peminjaman/process' => __DIR__ . '/pages/peminjaman/process.php',
+    'logout' => __DIR__ . '/pages/Auth/Logout/logout.php',
 ];
 
 function checkAuth() {
@@ -70,11 +60,12 @@ function checkAuth() {
 
 $routes = [
     'login' => __DIR__ . '/pages/Auth/Login/login.php',
+    'register' => __DIR__ . '/pages/Auth/Register/register.php', 
+    'register/process' => __DIR__ . '/pages/Auth/Register/process_register.php', 
     'login/process' => __DIR__ . '/pages/Auth/Login/process_login.php',
     'login/forgot-password' => __DIR__ . '/pages/Auth/ForPass/forgot_pass.php',
     'login/verify-otp' => __DIR__ . '/pages/Auth/ForPass/verify-otp.php', 
     'login/reset-password' => __DIR__ . '/pages/Auth/ForPass/reset.php',
-    'logout' => __DIR__ . '/pages/Auth/Logout/logout.php',
 ];
 
 $request_uri = $_SERVER['REQUEST_URI'];
@@ -82,27 +73,26 @@ $base_url_path = parse_url(BASE_URL, PHP_URL_PATH);
 $path = str_replace($base_url_path, '', $request_uri);
 $path = trim($path, '/');
 
-// Remove query string if present
-if (($pos = strpos($path, '?')) !== false) {
-    $path = substr($path, 0, $pos);
-}
+// Extract the base path without query parameters
+$pathParts = explode('?', $path);
+$basePath = $pathParts[0];
 
 // If path is empty, set to default
-if (empty($path)) {
-    $path = '';
+if (empty($basePath)) {
+    $basePath = '';
 }
 
 // Check if route needs authentication
-if (array_key_exists($path, $protected_routes)) {
+if (array_key_exists($basePath, $protected_routes)) {
     checkAuth();
-    $page = $protected_routes[$path];
+    $page = $protected_routes[$basePath];
     require_once $page;
-} elseif (array_key_exists($path, $routes)) {
-    if (isset($_SESSION['id_petugas']) && ($path === 'login' || $path === '')) {
+} elseif (array_key_exists($basePath, $routes)) {
+    if (isset($_SESSION['id_petugas']) && ($basePath === 'login' || $basePath === '')) {
         header("Location: " . BASE_URL . "/dashboard");
         exit();
     }
-    $page = $routes[$path];
+    $page = $routes[$basePath];
     require_once $page;
 } else {
     http_response_code(404);
@@ -113,16 +103,21 @@ if (array_key_exists($path, $protected_routes)) {
 if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
     strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
     
-    if (array_key_exists($path, $protected_routes)) {
+    if (array_key_exists($basePath, $protected_routes)) {
         checkAuth();
-        require_once $protected_routes[$path];
+        require_once $protected_routes[$basePath];
         exit;
     }
 }
 
 // Handle POST requests for peminjaman
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    switch ($path) {
+    switch ($basePath) {
+        case 'peminjaman/cart-process': // Updated case
+            checkAuth();
+            require_once $protected_routes['peminjaman/cart_process'];
+            break;
+            
         case 'peminjaman/process':
             checkAuth();
             require_once $protected_routes['peminjaman/process'];

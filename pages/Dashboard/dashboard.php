@@ -109,8 +109,7 @@ ob_start();
                                   a.nama_anggota,
                                   pg.nama_petugas,
                                   b.nama_buku,
-                                  b.stok,
-                                  dp.qty
+                                  b.stok
                                   FROM PEMINJAMAN p
                                   LEFT JOIN DETAIL_PEMINJAMAN dp ON p.kode_pinjam = dp.kode_pinjam
                                   LEFT JOIN ANGGOTA a ON p.id_anggota = a.id_anggota 

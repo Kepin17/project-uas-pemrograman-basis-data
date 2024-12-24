@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-$title = "Hi $userName👋";
+$title = "Hi $userName";
 
 ob_start();
 ?>
