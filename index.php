@@ -88,7 +88,7 @@ if (array_key_exists($basePath, $protected_routes)) {
     $page = $protected_routes[$basePath];
     require_once $page;
 } elseif (array_key_exists($basePath, $routes)) {
-    if (isset($_SESSION['id_petugas']) && ($basePath === 'login' || $basePath === '')) {
+    if (isset($_SESSION['id_petugas'])  && ($basePath === 'login' || $basePath === '')) {
         header("Location: " . BASE_URL . "/dashboard");
         exit();
     }

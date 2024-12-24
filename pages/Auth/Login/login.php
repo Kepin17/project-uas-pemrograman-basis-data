@@ -3,45 +3,82 @@ require_once __DIR__ . '/../../../config/connection.php';
 require_once __DIR__ . '/../../../config/config.php';
 ob_start();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-    $password = $_POST['password'];
-    $remember = isset($_POST['remember']);
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
-    // Query to check user credentials
-    $query = "SELECT * FROM anggota WHERE email = ?";
+// Check for remember me cookie
+if (!isset($_SESSION['email']) && isset($_COOKIE['remember_user'])) {
+    $remembered_data = json_decode($_COOKIE['remember_user'], true);
+    if ($remembered_data) {
+        $user = checkUser($conn, $remembered_data['email'], $remembered_data['password'], 'petugas', true);
+        if ($user) {
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['id_petugas'] = $user['id_petugas'];
+            $_SESSION['nama_petugas'] = $user['nama_petugas'];
+            $_SESSION['user_type'] = $user['jabatan'];
+            header('Location: ' . BASE_URL . '/dashboard');
+            exit();
+        }
+    }
+}
+
+function checkUser($conn, $email, $password, $table, $from_cookie = false) {
+    $query = "SELECT * FROM $table WHERE email = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $email);
+    $stmt->bind_param('s', $email);
     $stmt->execute();
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
 
-    if ($user && password_verify($password, $user['password'])) {
-        // Set session variables
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_email'] = $user['email'];
+    if ($user) {
+        if ($from_cookie) {
+            return $password === $user['password'] ? $user : false;
+        } elseif (password_verify($password, $user['password'])) {
+            // Rehash password if necessary
+            if (password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
+                $newHash = password_hash($password, PASSWORD_DEFAULT);
+                $updateQuery = "UPDATE $table SET password = ? WHERE email = ?";
+                $updateStmt = $conn->prepare($updateQuery);
+                $updateStmt->bind_param('ss', $newHash, $email);
+                $updateStmt->execute();
+            }
+            return $user;
+        }
+    }
+    return false;
+}
 
-        // Handle remember me
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $remember = isset($_POST['remember']);
+
+    // Check in petugas table
+    $user = checkUser($conn, $email, $password, 'petugas');
+    if ($user) {
+        $_SESSION['email'] = $user['email'];
+        $_SESSION['id_petugas'] = $user['id_petugas'];
+        $_SESSION['nama_petugas'] = $user['nama_petugas'];
+        $_SESSION['user_type'] = $user['jabatan'];
+
+        // Set remember me cookie if checked
         if ($remember) {
-            $token = bin2hex(random_bytes(32));
-            $expires = date('Y-m-d H:i:s', strtotime('+14 days'));
-            
-            // Store remember me token in database
-            $query = "INSERT INTO remember_tokens (user_id, token, expires_at) VALUES (?, ?, ?)";
-            $stmt = $conn->prepare($query);
-            $stmt->bind_param("iss", $user['id'], $token, $expires);
-            $stmt->execute();
-
-            // Set remember me cookie
-            setcookie('remember_token', $token, strtotime('+14 days'), '/');
+            $cookie_data = json_encode([
+                'email' => $user['email'],
+                'password' => $user['password'] // Store hashed password
+            ]);
+            setcookie('remember_user', $cookie_data, time() + (14 * 24 * 60 * 60), '/'); // 14 days
         }
 
-        // Redirect to dashboard
         header('Location: ' . BASE_URL . '/dashboard');
-        exit;
-    } else {
-        $_SESSION['login_error'] = 'Email atau password salah!';
+        exit();
     }
+
+    // If no match found
+    $_SESSION['login_error'] = "Invalid email or password";
+    header('Location: ' . BASE_URL . '/login'); 
+    exit();
 }
 ?>
 
@@ -95,10 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit" class="btn btn-primary btn-login">
         <i class="fas fa-sign-in-alt me-2"></i>Login To System
     </button>
-    <div class="text-center mt-3">
-        <span>Don't have an account? </span>
-        <a href="<?= BASE_URL ?>/register">Register here</a>
-    </div>
+
 </form>
 
 <?php
