@@ -48,12 +48,94 @@ $protected_routes = [
     'staff/deleteStaff' => __DIR__ . '/pages/Staff/hapus.php',
     'peminjaman' => __DIR__ . '/pages/Peminjaman/index.php',
     'peminjaman/process' => __DIR__ . '/pages/peminjaman/process.php',
-    'logout' => __DIR__ . '/pages/Auth/Logout/logout.php',
 ];
+
+// Define role-based route access by ID
+$role_routes = [
+    'JB007' => [ // Staff Pelayanan
+        'dashboard',
+        'peminjaman',
+        'peminjaman/process',
+        'peminjaman/cart-process',
+        'peminjaman/add-to-cart',
+        'peminjaman/remove-from-cart',
+        'peminjaman/clear-cart',
+        'returning',
+        'returning/pross'
+    ],
+    'JB003' => [ // Staff Administrasi
+        'dashboard',
+        'books',
+        'books/addBook',
+        'books/editBook',
+        'books/deleteBook',
+        'categories',
+        'categories/addCategory',
+        'categories/editCategory',
+        'categories/deleteCategory',
+        'shelves',
+        'shelves/addShelve',
+        'shelves/editShelve',
+        'shelves/deleteShelve',
+        'members',
+        'members/addMember',
+        'members/editMember',
+        'members/deleteMember'
+    ],
+    'JB002' => [ // Wakil Kepala Perpustakaan
+        'dashboard',
+        'staff',
+        'staff/addStaff',
+        'staff/editStaff',
+        'staff/deleteStaff',
+        'position',
+        'position/addPosition',
+        'position/editPosition',
+        'position/deletePosition'
+    ],
+    'JB001' => [ // Kepala Perpustakaan - has access to everything
+        'dashboard',
+        'staff',
+        'staff/addStaff',
+        'staff/editStaff',
+        'staff/deleteStaff',
+        'position',
+        'position/addPosition',
+        'position/editPosition',
+        'position/deletePosition'
+    ]
+];
+
+function checkRoleAccess($path) {
+    if (!isset($_SESSION['id_jabatan'])) {
+        return false;
+    }
+
+    global $role_routes;
+    $userRoleId = $_SESSION['id_jabatan'];
+
+    // If user role exists and path is in allowed routes
+    if (isset($role_routes[$userRoleId]) && in_array($path, $role_routes[$userRoleId])) {
+        return true;
+    }
+
+    // Special case for Kepala Perpustakaan
+    if ($userRoleId === 'JB001') {
+        return true;
+    }
+
+    return false;
+}
 
 function checkAuth() {
     if (!isset($_SESSION['id_petugas'])) {
         header("Location: " . BASE_URL . "/login");
+        exit();
+    }
+
+    global $basePath;
+    if (!checkRoleAccess($basePath)) {
+        include __DIR__ . '/pages/errors/403.php';
         exit();
     }
 }
@@ -66,6 +148,8 @@ $routes = [
     'login/forgot-password' => __DIR__ . '/pages/Auth/ForPass/forgot_pass.php',
     'login/verify-otp' => __DIR__ . '/pages/Auth/ForPass/verify-otp.php', 
     'login/reset-password' => __DIR__ . '/pages/Auth/ForPass/reset.php',
+    'logout' => __DIR__ . '/pages/Auth/Logout/logout.php',
+
 ];
 
 $request_uri = $_SERVER['REQUEST_URI'];
@@ -84,7 +168,11 @@ if (empty($basePath)) {
 
 // Check if route needs authentication
 if (array_key_exists($basePath, $protected_routes)) {
-    checkAuth();
+    checkAuth(); // This will now check both authentication and authorization
+    if ($basePath !== 'dashboard' && !checkRoleAccess($basePath)) {
+        include __DIR__ . '/pages/errors/403.php';
+        exit();
+    }
     $page = $protected_routes[$basePath];
     require_once $page;
 } elseif (array_key_exists($basePath, $routes)) {

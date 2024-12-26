@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['email'] = $user['email'];
         $_SESSION['id_petugas'] = $user['id_petugas'];
         $_SESSION['nama_petugas'] = $user['nama_petugas'];
-        $_SESSION['user_type'] = $user['jabatan'];
+        $_SESSION['id_jabatan'] = $user['id_jabatan'];
 
         // Set remember me cookie if checked
         if ($remember) {

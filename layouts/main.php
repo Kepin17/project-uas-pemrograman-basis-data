@@ -168,30 +168,48 @@
             <a href="<?php echo BASE_URL; ?>/dashboard" class="menu-item <?php echo $currentPage == 'dashboard' ? 'active' : ''; ?>">
                 <i class="fas fa-tachometer-alt"></i> Dashboard
             </a>
-            <a href="<?php echo BASE_URL; ?>/books" class="menu-item <?php echo $currentPage == 'books' ? 'active' : ''; ?>">
-                <i class="fas fa-book"></i> Manajemen Buku
-            </a>
-            <a href="<?php echo BASE_URL; ?>/shelves" class="menu-item <?php echo $currentPage == 'shelves' ? 'active' : ''; ?>">
-                <i class="fas fa-bookmark"></i> Rak Buku
-            </a>
-            <a href="<?php echo BASE_URL; ?>/categories" class="menu-item <?php echo $currentPage == 'categories' ? 'active' : ''; ?>">
-                <i class="fas fa-tags"></i> Kategori
-            </a>
-            <a href="<?php echo BASE_URL; ?>/peminjaman" class="menu-item <?php echo $currentPage == 'borrowing' ? 'active' : ''; ?>">
-                <i class="fas fa-hand-holding"></i> Peminjaman
-            </a>
-            <a href="<?php echo BASE_URL; ?>/returning" class="menu-item <?php echo $currentPage == 'returning' ? 'active' : ''; ?>">
-                <i class="fas fa-undo"></i> Pengembalian
-            </a>
-            <a href="<?php echo BASE_URL; ?>/members" class="menu-item <?php echo $currentPage == 'members' ? 'active' : ''; ?>">
-                <i class="fas fa-users"></i> Anggota
-            </a>
-            <a href="<?php echo BASE_URL; ?>/position" class="menu-item <?php echo $currentPage == 'position' ? 'active' : ''; ?>">
-                <i class="fas fa-user"></i> Jabatan
-            </a>
-            <a href="<?php echo BASE_URL; ?>/staff" class="menu-item <?php echo $currentPage == 'staff' ? 'active' : ''; ?>">
-                <i class="fas fa-user-tie"></i> Staff
-            </a>
+
+            <?php 
+            $roleId = $_SESSION['id_jabatan'] ?? '';
+            
+            // Menu for Staff Pelayanan (JB007)
+            if ($roleId === 'JB007'): ?>
+                <a href="<?php echo BASE_URL; ?>/peminjaman" class="menu-item <?php echo $currentPage == 'borrowing' ? 'active' : ''; ?>">
+                    <i class="fas fa-hand-holding"></i> Peminjaman
+                </a>
+                <a href="<?php echo BASE_URL; ?>/returning" class="menu-item <?php echo $currentPage == 'returning' ? 'active' : ''; ?>">
+                    <i class="fas fa-undo"></i> Pengembalian
+                </a>
+            <?php endif; ?>
+
+            <?php 
+            // Menu for Staff Administrasi (JB003)
+            if ($roleId === 'JB003'): ?>
+                <a href="<?php echo BASE_URL; ?>/books" class="menu-item <?php echo $currentPage == 'books' ? 'active' : ''; ?>">
+                    <i class="fas fa-book"></i> Manajemen Buku
+                </a>
+                <a href="<?php echo BASE_URL; ?>/shelves" class="menu-item <?php echo $currentPage == 'shelves' ? 'active' : ''; ?>">
+                    <i class="fas fa-bookmark"></i> Rak Buku
+                </a>
+                <a href="<?php echo BASE_URL; ?>/categories" class="menu-item <?php echo $currentPage == 'categories' ? 'active' : ''; ?>">
+                    <i class="fas fa-tags"></i> Kategori
+                </a>
+                <a href="<?php echo BASE_URL; ?>/members" class="menu-item <?php echo $currentPage == 'members' ? 'active' : ''; ?>">
+                    <i class="fas fa-users"></i> Anggota
+                </a>
+            <?php endif; ?>
+
+            <?php 
+            // Menu for Wakil Kepala and Kepala Perpustakaan (JB002 and JB001)
+            if ($roleId === 'JB002' || $roleId === 'JB001'): ?>
+                <a href="<?php echo BASE_URL; ?>/position" class="menu-item <?php echo $currentPage == 'position' ? 'active' : ''; ?>">
+                    <i class="fas fa-user"></i> Jabatan
+                </a>
+                <a href="<?php echo BASE_URL; ?>/staff" class="menu-item <?php echo $currentPage == 'staff' ? 'active' : ''; ?>">
+                    <i class="fas fa-user-tie"></i> Staff
+                </a>
+            <?php endif; ?>
+
             <a href="<?php echo BASE_URL; ?>/logout" class="menu-item">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>
