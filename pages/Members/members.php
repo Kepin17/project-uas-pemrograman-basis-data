@@ -6,13 +6,26 @@ $currentPage = 'members';
 $search = isset($_GET['search']) ? $conn->real_escape_string(trim($_GET['search'])) : '';
 $successMessage = isset($_GET['success']) ? $_GET['success'] : '';
 
-$query = "SELECT * FROM anggota";
+// Pagination setup
+$limit = 10;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$start = ($page - 1) * $limit;
 
+// Count total records for pagination
+$countQuery = "SELECT COUNT(*) as total FROM anggota";
+if (!empty($search)) {
+    $countQuery .= " WHERE nama_anggota LIKE '%$search%' OR id_anggota LIKE '%$search%'";
+}
+$countResult = $conn->query($countQuery);
+$totalRecords = $countResult->fetch_assoc()['total'];
+$totalPages = ceil($totalRecords / $limit);
+
+// Modified main query with LIMIT
+$query = "SELECT * FROM anggota";
 if (!empty($search)) {
     $query .= " WHERE nama_anggota LIKE '%$search%' OR id_anggota LIKE '%$search%'";
 }
-
-$query .= " ORDER BY id_anggota DESC";
+$query .= " ORDER BY id_anggota DESC LIMIT $start, $limit";
 
 $result = $conn->query($query) or die(mysqli_error($conn));
 
@@ -138,6 +151,29 @@ ob_start();
                     <?php endwhile; ?>
                 </tbody>
             </table>
+            
+            <!-- Pagination Controls -->
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page-1; ?><?php echo !empty($search) ? '&search='.$search : ''; ?>" 
+                           <?php echo ($page <= 1) ? 'tabindex="-1" aria-disabled="true"' : ''; ?>>Previous</a>
+                    </li>
+                    
+                    <?php for($i = 1; $i <= $totalPages; $i++): ?>
+                        <li class="page-item <?php echo ($page == $i) ? 'active' : ''; ?>">
+                            <a class="page-link" href="?page=<?php echo $i; ?><?php echo !empty($search) ? '&search='.$search : ''; ?>">
+                                <?php echo $i; ?>
+                            </a>
+                        </li>
+                    <?php endfor; ?>
+                    
+                    <li class="page-item <?php echo ($page >= $totalPages) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page+1; ?><?php echo !empty($search) ? '&search='.$search : ''; ?>"
+                           <?php echo ($page >= $totalPages) ? 'tabindex="-1" aria-disabled="true"' : ''; ?>>Next</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>

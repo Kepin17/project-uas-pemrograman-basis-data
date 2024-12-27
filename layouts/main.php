@@ -8,6 +8,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet"
     <!-- Custom CSS -->
     <style>
         :root {
@@ -22,6 +29,7 @@
             font-family: 'Roboto', sans-serif;
             background-color: #f8f9fa;
             color: var(--text-color);
+            font-family: roboto, sans-serif;
         }
 
         /* Sidebar Styles */
@@ -88,6 +96,17 @@
             transform: translateY(-5px);
         }
 
+        .right-btn {
+            position: relative;
+            right: -10rem;
+            transition: .5s;
+        }
+
+        .closeactive {
+            position: relative;
+            right: 0;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .sidebar {
@@ -110,7 +129,7 @@
         /* Header Styles */
         .main-header {
             background: white;
-            padding: 15px 20px;
+            padding: 15px 30px;
             border-radius: 10px;
             margin-bottom: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -138,6 +157,7 @@
 </head>
 <body>
     <!-- Sidebar -->
+
     <div class="sidebar">
        
         <div class="sidebar-header">
@@ -148,30 +168,48 @@
             <a href="<?php echo BASE_URL; ?>/dashboard" class="menu-item <?php echo $currentPage == 'dashboard' ? 'active' : ''; ?>">
                 <i class="fas fa-tachometer-alt"></i> Dashboard
             </a>
-            <a href="<?php echo BASE_URL; ?>/books" class="menu-item <?php echo $currentPage == 'books' ? 'active' : ''; ?>">
-                <i class="fas fa-book"></i> Manajemen Buku
-            </a>
-            <a href="<?php echo BASE_URL; ?>/shelves" class="menu-item <?php echo $currentPage == 'shelves' ? 'active' : ''; ?>">
-                <i class="fas fa-bookmark"></i> Rak Buku
-            </a>
-            <a href="<?php echo BASE_URL; ?>/categories" class="menu-item <?php echo $currentPage == 'categories' ? 'active' : ''; ?>">
-                <i class="fas fa-tags"></i> Kategori
-            </a>
-            <a href="<?php echo BASE_URL; ?>/borrowing" class="menu-item <?php echo $currentPage == 'borrowing' ? 'active' : ''; ?>">
-                <i class="fas fa-hand-holding"></i> Peminjaman
-            </a>
-            <a href="<?php echo BASE_URL; ?>/returning" class="menu-item <?php echo $currentPage == 'returning' ? 'active' : ''; ?>">
-                <i class="fas fa-undo"></i> Pengembalian
-            </a>
-            <a href="<?php echo BASE_URL; ?>/members" class="menu-item <?php echo $currentPage == 'members' ? 'active' : ''; ?>">
-                <i class="fas fa-users"></i> Anggota
-            </a>
-            <a href="<?php echo BASE_URL; ?>/position" class="menu-item <?php echo $currentPage == 'position' ? 'active' : ''; ?>">
-                <i class="fas fa-user"></i> Jabatan
-            </a>
-            <a href="<?php echo BASE_URL; ?>/staff" class="menu-item <?php echo $currentPage == 'staff' ? 'active' : ''; ?>">
-                <i class="fas fa-user-tie"></i> Staff
-            </a>
+
+            <?php 
+            $roleId = $_SESSION['id_jabatan'] ?? '';
+            
+            // Menu for Staff Pelayanan (JB007)
+            if ($roleId === 'JB007'): ?>
+                <a href="<?php echo BASE_URL; ?>/peminjaman" class="menu-item <?php echo $currentPage == 'borrowing' ? 'active' : ''; ?>">
+                    <i class="fas fa-hand-holding"></i> Peminjaman
+                </a>
+                <a href="<?php echo BASE_URL; ?>/returning" class="menu-item <?php echo $currentPage == 'returning' ? 'active' : ''; ?>">
+                    <i class="fas fa-undo"></i> Pengembalian
+                </a>
+            <?php endif; ?>
+
+            <?php 
+            // Menu for Staff Administrasi (JB003)
+            if ($roleId === 'JB003'): ?>
+                <a href="<?php echo BASE_URL; ?>/books" class="menu-item <?php echo $currentPage == 'books' ? 'active' : ''; ?>">
+                    <i class="fas fa-book"></i> Manajemen Buku
+                </a>
+                <a href="<?php echo BASE_URL; ?>/shelves" class="menu-item <?php echo $currentPage == 'shelves' ? 'active' : ''; ?>">
+                    <i class="fas fa-bookmark"></i> Rak Buku
+                </a>
+                <a href="<?php echo BASE_URL; ?>/categories" class="menu-item <?php echo $currentPage == 'categories' ? 'active' : ''; ?>">
+                    <i class="fas fa-tags"></i> Kategori
+                </a>
+                <a href="<?php echo BASE_URL; ?>/members" class="menu-item <?php echo $currentPage == 'members' ? 'active' : ''; ?>">
+                    <i class="fas fa-users"></i> Anggota
+                </a>
+            <?php endif; ?>
+
+            <?php 
+            // Menu for Wakil Kepala and Kepala Perpustakaan (JB002 and JB001)
+            if ($roleId === 'JB002' || $roleId === 'JB001'): ?>
+                <a href="<?php echo BASE_URL; ?>/position" class="menu-item <?php echo $currentPage == 'position' ? 'active' : ''; ?>">
+                    <i class="fas fa-user"></i> Jabatan
+                </a>
+                <a href="<?php echo BASE_URL; ?>/staff" class="menu-item <?php echo $currentPage == 'staff' ? 'active' : ''; ?>">
+                    <i class="fas fa-user-tie"></i> Staff
+                </a>
+            <?php endif; ?>
+
             <a href="<?php echo BASE_URL; ?>/logout" class="menu-item">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>
@@ -181,9 +219,25 @@
     <!-- Main Content -->
     <div class="main-content">
         <!-- Toggle Sidebar Button (visible on mobile) -->
-        <button class="btn btn-primary toggle-sidebar d-md-none mb-3">
-            <i class="fas fa-bars"></i>
+         <div class="btn-wrapper d-flex justify-content-between align-items-center">
+        <button class="btn btn-primary toggle-sidebar leftBtn d-md-none mb-3 mx-4">
+                 <i class="fas fa-bars"></i>
         </button>
+      
+        <button class="btn btn-primary toggle-sidebar right-btn d-md-none mb-3 mx-4">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+        <nav class="d-flex justify-content-between align-items-center main-header">  
+            <div style=" display: flex; justify-content: space-between; width: 100%;">
+                <h5><?php echo $pageTitle ?? 'Perpustakaan'; ?></h5>
+                <div >
+                    <h6><?php echo date('l, d F Y');?></h6>
+                    <h6>Hi <?php echo isset($_SESSION['nama_petugas']) ? $_SESSION['nama_petugas'] : 'Bro'; ?>!</h6>
+               
+                </div>
+            </div>
+        </nav>
         <?php echo $content ?? ''; ?>
     </div>
 
@@ -191,9 +245,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
     <script>
+        const leftbtn = document.querySelector('.leftBtn');
+        const rightBtn = document.querySelector('.right-btn');
+        const sidebar = document.querySelector('.sidebar');
         // Toggle Sidebar on Mobile
-        document.querySelector('.toggle-sidebar')?.addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('active');
+        leftbtn.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            rightBtn.classList.toggle('closeactive');
+        });
+
+        rightBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            rightBtn.classList.toggle('closeactive');
+            
         });
     </script>
 </body>

@@ -26,13 +26,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama = $_POST['nama_petugas'];
     $email = $_POST['email'];
     $nomor_telp = $_POST['nomor_telp'];
+    $id_jabatan = trim($_POST['id_jabatan']); // Trim to remove any extra spaces
+
+    // Generate default password
+    $first_letter = strtolower(substr($nama, 0, 1));
+    $last_three_digits = substr($nomor_telp, -3);
+    $default_password = $first_letter . $last_three_digits;
+    
+    // Hash the password
+    $hashed_password = password_hash($default_password, PASSWORD_DEFAULT);
 
     $id_anggota = generateIdAnggota($conn);
 
-    $query = "INSERT INTO petugas (id_petugas, nama_petugas, email, nomor_telp) 
-              VALUES ('$id_anggota', '$nama', '$email', '$nomor_telp')";
+    $query = "INSERT INTO petugas (id_petugas, nomor_telp, nama_petugas, email, id_jabatan, password) 
+              VALUES (?, ?, ?, ?, ?, ?)";
+              
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ssssss", $id_anggota, $nomor_telp, $nama, $email, $id_jabatan, $hashed_password);
 
-    if ($conn->query($query)) {
+    if ($stmt->execute()) {
         header("Location: " . BASE_URL . "/staff?success=menambahkan staff");
         exit;
     } else {
@@ -63,7 +75,7 @@ ob_start();
           <select name="id_jabatan" id="id_jabatan" class="form-select" required>
             <option value="" disabled selected>Pilih Jabatan</option>
             <?php while ($jabatan = $jabatanResult->fetch_assoc()): ?>
-              <option value="<?= htmlspecialchars($jabatan['id_jabatan']) ?>">
+              <option value="<?= htmlspecialchars(trim($jabatan['id_jabatan'])) ?>">
                 <?= htmlspecialchars($jabatan['nama_jabatan'])?>
               </option>
             <?php endwhile; ?>
