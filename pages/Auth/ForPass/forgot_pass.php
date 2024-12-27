@@ -1,5 +1,24 @@
 <?php
 require_once __DIR__ . '/../../../config/connection.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use Dotenv\Dotenv;
+
+// Muat file .env
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../../');
+$dotenv->load();
+
+// Variabel konfigurasi email dari .env
+$mailHost = $_ENV['MAIL_HOST'];
+$mailPort = $_ENV['MAIL_PORT'];
+$mailUsername = $_ENV['MAIL_USERNAME'];
+$mailPassword = $_ENV['MAIL_PASSWORD'];
+$mailEncryption = $_ENV['MAIL_ENCRYPTION'];
+$mailFrom = $_ENV['MAIL_FROM'];
+$mailFromName = $_ENV['MAIL_FROM_NAME'];
+
 $title = "Verify Email";
 $subTitle = "Enter your email to receive OTP";
 
@@ -13,31 +32,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $otp = generateOTP();
     $expired_at = date('Y-m-d H:i:s', strtotime('+15 minutes'));
-    
+
+    // Hapus OTP lama jika ada
+    $conn->query("DELETE FROM password_resets WHERE email = '$email'");
+
     $query = "INSERT INTO password_resets (email, otp, expired_at) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("sss", $email, $otp, $expired_at);
-    
+
     if ($stmt->execute()) {
-        // Send email with OTP
-        $to = $email;
-        $subject = "Password Reset OTP";
-        $message = "Your OTP is: " . $otp;
-        mail($to, $subject, $message);
-        
-        header("Location: " . BASE_URL . "/login/verify-otp?email=" . $email);
-        exit();
+        // Gunakan PHPMailer untuk mengirim email
+        $mail = new PHPMailer(true);
+
+        try {
+            // Konfigurasi SMTP
+            $mail->isSMTP();
+            $mail->Host       = $mailHost;
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $mailUsername;
+            $mail->Password   = $mailPassword;
+            $mail->SMTPSecure = $mailEncryption;
+            $mail->Port       = $mailPort;
+
+            // Pengaturan Pengirim dan Penerima
+            $mail->setFrom($mailFrom, $mailFromName);
+            $mail->addAddress($email);
+
+            // Konten Email
+            $mail->isHTML(true);
+            $mail->Subject = 'Your OTP Code';
+            $mail->Body    = "Your OTP is: <b>$otp</b>. It will expire in 15 minutes.";
+            $mail->AltBody = "Your OTP is: $otp. It will expire in 15 minutes.";
+
+            // Kirim Email
+            $mail->send();
+
+            // Redirect jika sukses
+            header("Location: " . BASE_URL . "/login/verify-otp?email=" . $email);
+            exit();
+        } catch (Exception $e) {
+            $warning = "Failed to send OTP. Mailer Error: {$mail->ErrorInfo}";
+        }
     } else {
-        $warning = 'Failed to send OTP. Please try again.';
+        $warning = 'Failed to save OTP. Please try again.';
     }
 }
-ob_start();
 ?>
 
 <?php if ($warning): ?>
-    <div class="alert alert-warning" role="alert">
-        <?php echo $warning; ?>
-    </div>
+<div class="alert alert-warning"><?php echo $warning; ?></div>
 <?php endif; ?>
 
 <form method="POST">

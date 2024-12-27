@@ -1,7 +1,6 @@
+-- Active: 1734660316584@@127.0.0.1@3306@manajemen_perpustakaan
 CREATE DATABASE manajemen_perpustakaan;
 USE manajemen_perpustakaan;
-
--- drop database manajemen_perpustakaan;
 
 CREATE TABLE ANGGOTA (
     id_anggota VARCHAR(6) UNIQUE NOT NULL PRIMARY KEY,

@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . '/../../../config/connection.php';
 require_once __DIR__ . '/../../../config/config.php';
-$subTitle = "Enter the OTP sent to your email to reset your password";
 
+$subTitle = "Enter the OTP sent to your email to reset your password";
 $warning = '';
 $showPasswordFields = false;
 $userName = '';
@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $otp = isset($_POST['otp']) ? $_POST['otp'] : '';
 
     if ($otp) {
-        // Verify OTP
+        // Verifikasi OTP
         $stmt = $conn->prepare("SELECT * FROM password_resets WHERE email = ? AND otp = ?");
         $stmt->bind_param("ss", $email, $otp);
         $stmt->execute();
@@ -20,7 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($result->num_rows > 0) {
             $showPasswordFields = true;
-            // Fetch user name
+
+            // Ambil nama pengguna
             $userStmt = $conn->prepare("SELECT nama_petugas FROM petugas WHERE email = ?");
             $userStmt->bind_param("s", $email);
             $userStmt->execute();
@@ -32,18 +33,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $warning = 'Invalid OTP. Please try again.';
         }
     } else {
-        // Handle password reset logic here
+        // Reset password
         $newPassword = $_POST['new_password'];
         $confirmPassword = $_POST['confirm_password'];
 
         if ($newPassword === $confirmPassword) {
-            // Update password in the database
             $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
             $updateStmt = $conn->prepare("UPDATE petugas SET password = ? WHERE email = ?");
             $updateStmt->bind_param("ss", $hashedPassword, $email);
             $updateStmt->execute();
 
-            // Redirect to login page or show success message
             header("Location:". BASE_URL . "/login");
             exit();
         } else {
@@ -52,20 +51,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 $title = "Hi $userName";
-
-ob_start();
 ?>
 
 <?php if ($warning): ?>
-    <div class="alert alert-warning" role="alert">
-        <?php echo $warning; ?>
-    </div>
+<div class="alert alert-warning"><?php echo $warning; ?></div>
 <?php endif; ?>
 
 <form method="POST">
     <input type="hidden" name="email" value="<?php echo htmlspecialchars($_GET['email']); ?>">
     <?php if ($showPasswordFields): ?>
-       
         <div class="mb-3">
             <label for="new_password" class="form-label">New Password</label>
             <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Enter new password" required>
