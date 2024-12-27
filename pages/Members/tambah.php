@@ -4,20 +4,18 @@ $pageTitle = "Tambah Anggota";
 $currentPage = 'members';
 
 function generateIdAnggota($conn) {
-    // Query untuk mendapatkan ID anggota dengan nilai numerik terbesar
     $query = "SELECT id_anggota FROM anggota ORDER BY id_anggota DESC LIMIT 1";
     $result = $conn->query($query);
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $lastId = $row['id_anggota']; 
-        $number = (int) substr($lastId, 2); // Ambil angka setelah 'AG'
-        $newNumber = $number + 1;          // Tambah 1
+        $number = (int) substr($lastId, 2);
+        $newNumber = $number + 1;
     } else {
-        $newNumber = 1; // Jika belum ada data, mulai dari 1
+        $newNumber = 1; 
     }
 
-    // Format ID baru
     return 'AG' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
 }
 
@@ -27,10 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nomor_telp = $_POST['nomor_telp'];
     $alamat = $_POST['alamat'];
 
-    // Generate ID anggota baru
     $id_anggota = generateIdAnggota($conn);
 
-    // Query untuk insert data
     $query = "INSERT INTO anggota (id_anggota, nama_anggota, email, nomor_telp, alamat) 
               VALUES ('$id_anggota', '$nama', '$email', '$nomor_telp', '$alamat')";
 

@@ -1,6 +1,11 @@
 <?php
+require "config/connection.php";
 $pageTitle = "Pengembalian Buku";
 $currentPage = "returning";
+
+$query = "SELECT * FROM pengembalian";
+$result = $conn->query($query);
+
 ob_start();
 ?>
 
@@ -22,7 +27,7 @@ ob_start();
                             </select>
                         </div>
 
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label for="kondisi_buku" class="form-label">Kondisi Buku</label>
                             <select class="form-select" id="kondisi_buku" name="kondisi_buku" required>
                                 <option value="">Pilih Kondisi</option>
@@ -30,7 +35,7 @@ ob_start();
                                 <option value="rusak">Rusak (Rp 100,000)</option>
                                 <option value="hilang">Hilang (Rp 500,000)</option>
                             </select>
-                        </div>
+                        </div> -->
 
                         <div class="mb-3">
                             <label class="form-label">Detail Peminjaman</label>
@@ -68,14 +73,18 @@ ob_start();
                             <thead>
                                 <tr>
                                     <th>Tanggal</th>
-                                    <th>Peminjam</th>
-                                    <th>Buku</th>
-                                    <th>Kondisi</th>
-                                    <th>Total Denda</th>
+                                    <th>Denda</th>
+                                    <th>kode Pinjam</th>
+                                    <th>Petugas</th>
                                 </tr>
                             </thead>
                             <tbody id="riwayatPengembalian">
-                                <!-- Data riwayat akan ditampilkan di sini -->
+                                <?php while ($pengembalian = $result->fetch_assoc()) { ?>
+                                    <td><?= htmlspecialchars($pengembalian['tanggal_pengembalian']) ?></td>
+                                    <td><?= htmlspecialchars($pengembalian['denda']) ?></td>
+                                    <!-- <td><?= htmlspecialchars($pengembalian['kode_pinjam']) ?></td> -->
+                                    <!-- <td><?= htmlspecialchars($pengembalian['kode_pinjam']) ?></td> -->
+                                <?php } ?>
                             </tbody>
                         </table>
                     </div>

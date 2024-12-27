@@ -81,8 +81,8 @@ ob_start();
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($jabatan = $data->fetch_assoc()):
-                        $no = 1;
+                    <?php $no = 1;
+                    while ($jabatan = $data->fetch_assoc()) {
                         ?>
                         <tr>
                             <td><?= $no++ ?></td>
@@ -98,7 +98,7 @@ ob_start();
                                 </div>
                             </td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php } ?>
                 </tbody>
             </table>
         </div>

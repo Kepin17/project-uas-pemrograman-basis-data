@@ -47,18 +47,22 @@ ob_start();
         border-color: #ced4da;
         color: #495057;
     }
+
     .btn-white:hover {
         background-color: #e9ecef;
         border-color: #ced4da;
     }
+
     .card-white {
         background-color: white;
         color: #495057;
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     }
+
     .bg-white {
         background-color: white;
     }
+
     .bg-light-white {
         background-color: #f8f9fa;
     }
@@ -143,7 +147,7 @@ ob_start();
                 </div>
                 <div class="col text-end">
                     <button class="btn btn-white" data-bs-toggle="modal" data-bs-target="#modalPeminjamanBaru">
-                        <i class="fas fa-plus me-2"></i>Peminjaman Baru
+                            <i class="fas fa-plus me-2"></i>Peminjaman Baru
                     </button>
                 </div>
             </div>
@@ -162,70 +166,70 @@ ob_start();
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while($peminjaman = mysqli_fetch_assoc($peminjamanResult)) { ?>
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center py-2">
-                                    <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($peminjaman['nama_anggota']); ?>&background=random" 
-                                         class="rounded-circle me-3" width="40" height="40">
-                                    <div>
-                                        <div class="fw-semibold"><?php echo $peminjaman['nama_anggota']; ?></div>
-                                        <div class="text-muted small">ID: <?php echo $peminjaman['id_anggota']; ?></div>
+                        <?php while ($peminjaman = mysqli_fetch_assoc($peminjamanResult)) { ?>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center py-2">
+                                        <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($peminjaman['nama_anggota']); ?>&background=random"
+                                            class="rounded-circle me-3" width="40" height="40">
+                                        <div>
+                                            <div class="fw-semibold"><?php echo $peminjaman['nama_anggota']; ?></div>
+                                            <div class="text-muted small">ID: <?php echo $peminjaman['id_anggota']; ?></div>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div>
-                                        <div class="fw-semibold"><?php echo $peminjaman['nama_buku']; ?></div>
-                                        <div class="text-muted small">ID: <?php echo $peminjaman['id_buku']; ?></div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            <div class="fw-semibold"><?php echo $peminjaman['nama_buku']; ?></div>
+                                            <div class="text-muted small">ID: <?php echo $peminjaman['id_buku']; ?></div>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-nowrap">
-                                    <?php echo date('d M Y', strtotime($peminjaman['tanggal_pinjam'])); ?>
-                                    <div class="text-muted small"><?php echo date('l', strtotime($peminjaman['tanggal_pinjam'])); ?></div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="text-nowrap">
-                                    <?php echo date('d M Y', strtotime($peminjaman['estimasi_pinjam'])); ?>
-                                    <div class="text-muted small"><?php echo date('l', strtotime($peminjaman['estimasi_pinjam'])); ?></div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex flex-column align-items-start">
-                                    <?php
-                                    switch ($peminjaman['status']) {
-                                        case "DIPINJAM":
-                                            echo '<span class="badge bg-success-subtle text-success">Dipinjam</span>';
-                                            break;
-                                        case "TERLAMBAT":
-                                            echo '<span class="badge bg-warning-subtle text-warning">Terlambat</span>';
-                                            break;
-                                        case "DIKEMBALIKAN":
-                                            echo '<span class="badge bg-info-subtle text-info">Dikembalikan</span>';
-                                            break;
-                                    }
-                                    ?>
-                                    <div class="mt-1 text-muted small">staff : <?php echo $peminjaman['nama_petugas']; ?></div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-light btn-sm" title="Lihat Detail">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-light btn-sm" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-light btn-sm" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                                <td>
+                                    <div class="text-nowrap">
+                                        <?php echo date('d M Y', strtotime($peminjaman['tanggal_pinjam'])); ?>
+                                        <div class="text-muted small"><?php echo date('l', strtotime($peminjaman['tanggal_pinjam'])); ?></div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-nowrap">
+                                        <?php echo date('d M Y', strtotime($peminjaman['estimasi_pinjam'])); ?>
+                                        <div class="text-muted small"><?php echo date('l', strtotime($peminjaman['estimasi_pinjam'])); ?></div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column align-items-start">
+                                        <?php
+                                        switch ($peminjaman['status']) {
+                                            case "DIPINJAM":
+                                                echo '<span class="badge bg-success-subtle text-success">Dipinjam</span>';
+                                                break;
+                                            case "TERLAMBAT":
+                                                echo '<span class="badge bg-warning-subtle text-warning">Terlambat</span>';
+                                                break;
+                                            case "DIKEMBALIKAN":
+                                                echo '<span class="badge bg-info-subtle text-info">Dikembalikan</span>';
+                                                break;
+                                        }
+                                        ?>
+                                        <div class="mt-1 text-muted small">staff : <?php echo $peminjaman['nama_petugas']; ?></div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-light btn-sm" title="Lihat Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-light btn-sm" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-light btn-sm" title="Hapus">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                         <?php } ?>
                     </tbody>
                 </table>
@@ -252,137 +256,100 @@ ob_start();
 <?php
 $content = ob_get_clean();
 require_once(__DIR__ . '/../../layouts/main.php');
+require_once(__DIR__ . './tambah.php');
+
 ?>
 
 <!-- Modal Peminjaman Baru -->
-<div class="modal fade" id="modalPeminjamanBaru" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-white">
-                <h5 class="modal-title">Peminjaman Baru</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form action="pages/Borrowing/proses_tambah.php" method="POST">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Anggota</label>
-                        <select name="id_anggota" class="form-select" required>
-                            <option value="">Pilih Anggota</option>
-                            <?php
-                            $query = "SELECT id_anggota, nama_anggota FROM anggota";
-                            $result = mysqli_query($conn, $query);
-                            while($row = mysqli_fetch_assoc($result)) {
-                                echo "<option value='{$row['id_anggota']}'>{$row['nama_anggota']}</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Buku</label>
-                        <select name="id_buku" class="form-select" required>
-                            <option value="">Pilih Buku</option>
-                            <?php
-                            $query = "SELECT id_buku, nama_buku, stok FROM buku WHERE stok > 0";
-                            $result = mysqli_query($conn, $query);
-                            while($row = mysqli_fetch_assoc($result)) {
-                                echo "<option value='{$row['id_buku']}'>{$row['nama_buku']} | sisa : {$row['stok']} </option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Tanggal Pinjam</label>
-                        <input type="date" name="tanggal_pinjam" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Estimasi Pengembalian</label>
-                        <input type="date" name="estimasi_pinjam" class="form-control" required>
-                    </div>
-                </div>
-                <div class="modal-footer bg-white">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-white">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
 
 <!-- Add this before closing body tag -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle status changes
-    document.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            const status = this.dataset.status;
-            const button = this.closest('.dropdown').querySelector('.btn-status');
-            const peminjamanId = button.dataset.id;
-            
-            // Update status via AJAX
-            updateStatus(peminjamanId, status, button);
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle status changes
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const status = this.dataset.status;
+                const button = this.closest('.dropdown').querySelector('.btn-status');
+                const peminjamanId = button.dataset.id;
+
+                // Update status via AJAX
+                updateStatus(peminjamanId, status, button);
+            });
         });
     });
-});
 
-function updateStatus(peminjamanId, status, button) {
-    fetch('api/update-status.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            id_peminjaman: peminjamanId,
-            status: status
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Update button appearance
-            updateStatusButton(button, status);
-            // Show success toast
-            showToast('Status berhasil diperbarui', 'success');
-        } else {
-            showToast('Gagal memperbarui status', 'error');
-        }
-    })
-    .catch(error => {
-        showToast('Terjadi kesalahan', 'error');
-    });
-}
-
-function updateStatusButton(button, status) {
-    const statusClasses = {
-        '1': ['bg-success-subtle text-success', 'Dipinjam'],
-        '2': ['bg-warning-subtle text-warning', 'Terlambat'],
-        '3': ['bg-info-subtle text-info', 'Dikembalikan']
-    };
-
-    // Remove all possible status classes
-    button.className = 'btn btn-status dropdown-toggle';
-    
-    if (statusClasses[status]) {
-        button.classList.add(...statusClasses[status][0].split(' '));
-        button.textContent = statusClasses[status][1];
+    function updateStatus(peminjamanId, status, button) {
+        fetch('api/update-status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id_peminjaman: peminjamanId,
+                    status: status
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update button appearance
+                    updateStatusButton(button, status);
+                    // Show success toast
+                    showToast('Status berhasil diperbarui', 'success');
+                } else {
+                    showToast('Gagal memperbarui status', 'error');
+                }
+            })
+            .catch(error => {
+                showToast('Terjadi kesalahan', 'error');
+            });
     }
-}
 
-function showToast(message, type) {
-    // Add your preferred toast notification here
-    alert(message); // Simple alternative
-}
+    function updateStatusButton(button, status) {
+        const statusClasses = {
+            '1': ['bg-success-subtle text-success', 'Dipinjam'],
+            '2': ['bg-warning-subtle text-warning', 'Terlambat'],
+            '3': ['bg-info-subtle text-info', 'Dikembalikan']
+        };
+
+        // Remove all possible status classes
+        button.className = 'btn btn-status dropdown-toggle';
+
+        if (statusClasses[status]) {
+            button.classList.add(...statusClasses[status][0].split(' '));
+            button.textContent = statusClasses[status][1];
+        }
+    }
+
+    function showToast(message, type) {
+        // Add your preferred toast notification here
+        alert(message); // Simple alternative
+    }
 </script>
 
 <style>
-.btn-status {
-    border: none;
-    padding: 0.375rem 0.75rem;
-    border-radius: 50rem;
-    font-size: 0.875rem;
-}
-.bg-warning-subtle { background-color: rgba(255, 193, 7, 0.1); }
-.bg-info-subtle { background-color: rgba(13, 202, 240, 0.1); }
-.text-warning { color: #ffc107 !important; }
-.text-info { color: #0dcaf0 !important; }
+    .btn-status {
+        border: none;
+        padding: 0.375rem 0.75rem;
+        border-radius: 50rem;
+        font-size: 0.875rem;
+    }
+
+    .bg-warning-subtle {
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+
+    .bg-info-subtle {
+        background-color: rgba(13, 202, 240, 0.1);
+    }
+
+    .text-warning {
+        color: #ffc107 !important;
+    }
+
+    .text-info {
+        color: #0dcaf0 !important;
+    }
 </style>

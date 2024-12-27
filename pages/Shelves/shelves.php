@@ -10,7 +10,7 @@ $successMessage = isset($_GET['success']) ? $_GET['success'] : '';
 $query = "SELECT * FROM rak_buku";
 
 if (!empty($search)) {
-    $query .= " WHERE (nama_rak LIKE '%$search%')";
+    $query .= " WHERE nama_rak LIKE '%$search%' OR kode_rak LIKE '%$search%'";
 }
 
 $query .= " ORDER BY kode_rak DESC";
@@ -78,6 +78,19 @@ ob_start();
         <a href="<?php echo BASE_URL; ?>/shelves/addShelve" class="btn btn-pink" onclick="return confirmAction('add', '<?php echo BASE_URL; ?>/shelves/addShelve');">
             <i class="fas fa-plus me-2"></i>Tambah Rak
         </a>
+    </div>
+</div>
+
+<div class="card my-3">
+    <div class="card-body">
+        <form method="GET" action="<?php echo BASE_URL; ?>/shelves">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Cari Rak..." value="<?php echo htmlspecialchars($search); ?>">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search me-1"></i>Cari
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
