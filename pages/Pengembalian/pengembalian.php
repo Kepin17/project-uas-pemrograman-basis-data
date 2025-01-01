@@ -73,14 +73,12 @@ $denda_per_hari = 5000;
                                 <?php } ?>
                             </select>
                         </div>
-<<<<<<< HEAD
 
                         <!-- <div class="mb-3">
 =======
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
->>>>>>> f4f180e95fd0d478c935e0a8737dcdeb6c003316
                             <label for="kondisi_buku" class="form-label">Kondisi Buku</label>
                             <select class="form-select" id="kondisi_buku" name="kondisi_buku" required>
                                 <option value="">Pilih Kondisi</option>
@@ -141,9 +139,7 @@ $denda_per_hari = 5000;
                                 <?php } ?>
                             </tbody>
                         </table>
-=======
                         </div>
->>>>>>> f4f180e95fd0d478c935e0a8737dcdeb6c003316
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Proses Pengembalian</button>
