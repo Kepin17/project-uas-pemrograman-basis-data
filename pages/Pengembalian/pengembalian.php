@@ -2,10 +2,6 @@
 require "config/connection.php";
 $pageTitle = "Pengembalian Buku";
 $currentPage = "returning";
-
-$query = "SELECT * FROM pengembalian";
-$result = $conn->query($query);
-
 ob_start();
 
 // Fetch active loans
@@ -73,9 +69,6 @@ $denda_per_hari = 5000;
                                 <?php } ?>
                             </select>
                         </div>
-
-                        <!-- <div class="mb-3">
-=======
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
@@ -86,59 +79,6 @@ $denda_per_hari = 5000;
                                 <option value="rusak">Rusak (Rp 100,000)</option>
                                 <option value="hilang">Hilang (Rp 500,000)</option>
                             </select>
-<<<<<<< HEAD
-                        </div> -->
-
-                        <div class="mb-3">
-                            <label class="form-label">Detail Peminjaman</label>
-                            <div id="detailPeminjaman" class="border rounded p-3 bg-light">
-                                <p class="mb-2">Nama Peminjam: <span id="detail_nama">-</span></p>
-                                <p class="mb-2">Judul Buku: <span id="detail_buku">-</span></p>
-                                <p class="mb-2">Tanggal Pinjam: <span id="detail_tgl_pinjam">-</span></p>
-                                <p class="mb-2">Batas Kembali: <span id="detail_batas_kembali">-</span></p>
-                                <p class="mb-2">Keterlambatan: <span id="detail_terlambat">-</span></p>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Rincian Biaya</label>
-                            <div id="rincianBiaya" class="border rounded p-3 bg-light">
-                                <p class="mb-2">Denda Keterlambatan: <span id="denda_terlambat">Rp 0</span></p>
-                                <p class="mb-2">Denda Kondisi: <span id="denda_kondisi">Rp 0</span></p>
-                                <p class="fw-bold mb-0">Total Denda: <span id="total_denda">Rp 0</span></p>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">Proses Pengembalian</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Riwayat Pengembalian -->
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">Riwayat Pengembalian</h5>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Tanggal</th>
-                                    <th>Denda</th>
-                                    <th>kode Pinjam</th>
-                                    <th>Petugas</th>
-                                </tr>
-                            </thead>
-                            <tbody id="riwayatPengembalian">
-                                <?php while ($pengembalian = $result->fetch_assoc()) { ?>
-                                    <td><?= htmlspecialchars($pengembalian['tanggal_pengembalian']) ?></td>
-                                    <td><?= htmlspecialchars($pengembalian['denda']) ?></td>
-                                    <!-- <td><?= htmlspecialchars($pengembalian['kode_pinjam']) ?></td> -->
-                                    <!-- <td><?= htmlspecialchars($pengembalian['kode_pinjam']) ?></td> -->
-                                <?php } ?>
-                            </tbody>
-                        </table>
                         </div>
                     </div>
                 </div>
@@ -243,4 +183,3 @@ $denda_per_hari = 5000;
 $content = ob_get_clean();
 require_once __DIR__ . '/../../layouts/main.php';
 ?>
-
