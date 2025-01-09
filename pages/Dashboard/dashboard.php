@@ -1,6 +1,12 @@
 <?php
 require_once('config/connection.php');
 
+// Check if user has position JB001
+if (!isset($_SESSION['id_jabatan']) || $_SESSION['id_jabatan'] !== 'JB001') {
+    header('Location: unauthorized.php');
+    exit();
+}
+
 // Count queries
 $totalBooksQuery = "SELECT COUNT(*) as total FROM buku";
 $totalMembersQuery = "SELECT COUNT(*) as total FROM anggota";
@@ -13,6 +19,17 @@ $totalBorrowingsResult = mysqli_query($conn, $totalBorrowingsQuery);
 $totalBooks = mysqli_fetch_assoc($totalBooksResult)['total'];
 $totalMembers = mysqli_fetch_assoc($totalMembersResult)['total'];
 $totalBorrowings = mysqli_fetch_assoc($totalBorrowingsResult)['total'];
+
+// Add pagination configuration
+$records_per_page = 5;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $records_per_page;
+
+// Modify the total records query to include all records
+$total_query = "SELECT COUNT(*) as total FROM peminjaman";
+$total_result = mysqli_query($conn, $total_query);
+$total_records = mysqli_fetch_assoc($total_result)['total'];
+$total_pages = ceil($total_records / $records_per_page);
 
 $pageTitle = "Dashboard - Perpustakaan";
 $currentPage = 'dashboard';
@@ -45,6 +62,12 @@ ob_start();
 </style>
 
 <div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        <a href="printDashboard" class="btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-print fa-sm text-white-50 me-2"></i>Cetak Laporan
+        </a>
+    </div>
     <div class="row g-4 mb-4">
         <!-- Header Stats -->
         <div class="col-12 col-md-4">
@@ -87,7 +110,7 @@ ob_start();
         <div class="card-header bg-light-white py-3">
             <div class="row align-items-center">
                 <div class="col">
-                    <h5 class="mb-0">Peminjaman Terbaru</h5>
+                    <h5 class="mb-0">Riwayat Peminjaman</h5>
                 </div>
             </div>
         </div>
@@ -105,6 +128,7 @@ ob_start();
                     </thead>
                     <tbody>
                         <?php
+                        // Modified query to show all borrowing history
                         $query = "SELECT p.*, 
                                   a.nama_anggota,
                                   pg.nama_petugas,
@@ -115,8 +139,8 @@ ob_start();
                                   LEFT JOIN ANGGOTA a ON p.id_anggota = a.id_anggota 
                                   LEFT JOIN PETUGAS pg ON p.id_petugas = pg.id_petugas
                                   LEFT JOIN BUKU b ON dp.id_buku = b.id_buku
-                                  WHERE p.status != 'DIKEMBALIKAN'
-                                  ORDER BY p.tanggal_pinjam DESC";
+                                  ORDER BY p.tanggal_pinjam DESC
+                                  LIMIT $offset, $records_per_page";
                         $recentBorrowingsResult = mysqli_query($conn, $query);
                         while($borrowing = mysqli_fetch_assoc($recentBorrowingsResult)) { ?>
                         <tr>
@@ -134,7 +158,7 @@ ob_start();
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <div class="fw-semibold"><?php echo $borrowing['nama_buku']; ?></div>
-                                        <div class="text-muted small">ID: <?php echo $borrowing['id_buku']; ?></div>
+                                        <div class="text-muted small">Staff: <?php echo $borrowing['nama_petugas']; ?></div>
                                     </div>
                                 </div>
                             </td>
@@ -161,7 +185,7 @@ ob_start();
                                             echo '<span class="badge bg-warning-subtle text-warning">Terlambat</span>';
                                             break;
                                         case "DIKEMBALIKAN":
-                                            echo '<span class="badge bg-info-subtle text-info">Dikembalikan</span>';
+                                            echo '<span class="badge bg--subtle text-info">Dikembalikan</span>';
                                             break;
                                     }
                                     ?>
@@ -174,19 +198,48 @@ ob_start();
             </div>
         </div>
         <div class="card-footer bg-light-white border-0 py-3">
+            <?php if ($total_pages > 1): ?>
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center mb-0">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#"><i class="fas fa-chevron-left"></i></a>
+                    <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                        <a class="page-link" href="?page=<?= $page-1 ?>" <?= ($page <= 1) ? 'tabindex="-1" aria-disabled="true"' : '' ?>>
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
                     </li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+                    
+                    <?php
+                    $start_page = max(1, $page - 2);
+                    $end_page = min($total_pages, $start_page + 4);
+                    
+                    if ($start_page > 1) {
+                        echo '<li class="page-item"><a class="page-link" href="?page=1">1</a></li>';
+                        if ($start_page > 2) {
+                            echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                        }
+                    }
+                    
+                    for ($i = $start_page; $i <= $end_page; $i++) {
+                        echo '<li class="page-item ' . ($page == $i ? 'active' : '') . '">
+                              <a class="page-link" href="?page=' . $i . '">' . $i . '</a>
+                            </li>';
+                    }
+                    
+                    if ($end_page < $total_pages) {
+                        if ($end_page < $total_pages - 1) {
+                            echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                        }
+                        echo '<li class="page-item"><a class="page-link" href="?page=' . $total_pages . '">' . $total_pages . '</a></li>';
+                    }
+                    ?>
+                    
+                    <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
+                        <a class="page-link" href="?page=<?= $page+1 ?>" <?= ($page >= $total_pages) ? 'tabindex="-1" aria-disabled="true"' : '' ?>>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
                     </li>
                 </ul>
             </nav>
+            <?php endif; ?>
         </div>
     </div>
 </div>

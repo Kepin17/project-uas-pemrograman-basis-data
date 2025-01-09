@@ -1,6 +1,9 @@
 <?php
 require "config/connection.php";
 
+// Define the correct base URL
+define('BASE_URL', '/project-uas/project-uas-pemrograman-basis-data');
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         // Start transaction
@@ -8,6 +11,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $kode_pinjam = $_POST['peminjaman_id'];
         $kondisi_buku = $_POST['kondisi_buku'];
+        
+        // Get all books associated with this peminjaman
+        $query_books = "SELECT dp.id_buku 
+                       FROM detail_peminjaman dp 
+                       WHERE dp.kode_pinjam = ?";
+        $stmt = $conn->prepare($query_books);
+        $stmt->bind_param("s", $kode_pinjam);
+        $stmt->execute();
+        $books_result = $stmt->get_result();
+        $book_ids = [];
+        while ($row = $books_result->fetch_assoc()) {
+            $book_ids[] = $row['id_buku'];
+        }
         
         // Calculate denda based on kondisi
         $denda_kondisi = [
@@ -19,9 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Constants
         $DENDA_PER_HARI = 5000;
         
-        // Get peminjaman details to calculate late fee
-        $query_pinjam = "SELECT DATEDIFF(CURRENT_DATE, estimasi_pinjam) as keterlambatan 
-                         FROM peminjaman WHERE kode_pinjam = ?";
+        // Get peminjaman details and book IDs
+        $query_pinjam = "SELECT p.*, GROUP_CONCAT(dp.id_buku) as book_ids,
+                         DATEDIFF(CURRENT_DATE, p.estimasi_pinjam) as keterlambatan 
+                         FROM peminjaman p
+                         LEFT JOIN detail_peminjaman dp ON p.kode_pinjam = dp.kode_pinjam
+                         WHERE p.kode_pinjam = ?
+                         GROUP BY p.kode_pinjam";
         $stmt = $conn->prepare($query_pinjam);
         $stmt->bind_param("s", $kode_pinjam);
         $stmt->execute();
@@ -39,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $next_id = ($row['max_id'] ?? 0) + 1;
         $kode_pengembalian = 'PB' . str_pad($next_id, 3, '0', STR_PAD_LEFT);
 
-        // Insert into pengembalian table with denda
+        // Insert into pengembalian table
         $query = "INSERT INTO pengembalian (
             kode_pengembalian, 
             tanggal_pengembalian,
@@ -63,30 +83,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bind_param("s", $kode_pinjam);
             $stmt->execute();
             
-            // Update book stock
-            $update_stock = "UPDATE buku b 
-                            JOIN peminjaman p ON b.id_buku = p.id_buku 
-                            SET b.stok = b.stok + 1,
-                                b.status = CASE 
-                                    WHEN b.stok + 1 > 0 THEN 'TERSEDIA'
-                                    ELSE 'DIPINJAM'
-                                END
-                            WHERE p.kode_pinjam = ?";
-            $stmt = $conn->prepare($update_stock);
-            $stmt->bind_param("s", $kode_pinjam);
-            $stmt->execute();
+            // Update each book's stock
+            foreach ($book_ids as $id_buku) {
+                $update_stock = "UPDATE buku 
+                               SET stok = stok + 1,
+                                   status = CASE 
+                                       WHEN stok + 1 > 0 THEN 'TERSEDIA'
+                                       ELSE 'DIPINJAM'
+                                   END
+                               WHERE id_buku = ?";
+                $stmt = $conn->prepare($update_stock);
+                $stmt->bind_param("s", $id_buku);
+                $stmt->execute();
+            }
             
             // Commit transaction
             $conn->commit();
             
-            $response = [
-                'status' => 'success',
-                'message' => 'Pengembalian berhasil diproses',
-                'data' => [
-                    'kode_pengembalian' => $kode_pengembalian,
-                    'total_denda' => $total_denda
-                ]
-            ];
+            // Fix redirect URL
+            header('Location: ../returning?page=returning&status=success&message=Pengembalian berhasil diproses');
+            exit;
         } else {
             throw new Exception("Error executing query");
         }
@@ -95,23 +111,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Rollback transaction on error
         $conn->rollback();
         
-        $response = [
-            'status' => 'error',
-            'message' => 'Gagal memproses pengembalian: ' . $e->getMessage()
-        ];
+        // Fix redirect URL for error
+        header('Location: ../returning?page=returning&status=error&message=' . urlencode($e->getMessage()));
+        exit;
     }
-    
-    // Send JSON response
-    header('Content-Type: application/json');
-    echo json_encode($response);
-    exit;
-    
 } else {
-    header('Content-Type: application/json');
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Invalid request method'
-    ]);
+    // Fix redirect URL for invalid method
+    header('Location: ../returning?page=returning&status=error&message=Invalid request method');
     exit;
 }
 ?>

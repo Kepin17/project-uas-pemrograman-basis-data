@@ -20,6 +20,7 @@ if (!isset($_SESSION['id_petugas']) && $path === __DIR__ . '/') {
 $protected_routes = [
     '' => __DIR__ . '/pages/Dashboard/dashboard.php',
     'dashboard' => __DIR__ . '/pages/Dashboard/dashboard.php',
+    'printDashboard' => __DIR__ . '/pages/Dashboard/printDashboard.php',
     'books' => __DIR__ . '/pages/Books/books.php',
     'books/addBook' => __DIR__ . '/pages/Books/tambah.php',
     'books/editBook' => __DIR__ . '/pages/Books/edit.php',
@@ -32,7 +33,7 @@ $protected_routes = [
     'shelves/addShelve' => __DIR__ . '/pages/Shelves/tambah.php',
     'shelves/editShelve' => __DIR__ . '/pages/Shelves/edit.php',
     'shelves/deleteShelve' => __DIR__ . '/pages/Shelves/hapus.php',
-    'returning' => __DIR__ . '/pages/Pengembalian/pengembalian.php',
+    'returning' => __DIR__ . '/pages/Pengembalian/index.php',
     'returning/pross' => __DIR__ . '/pages/Pengembalian/process_pengembalian.php',
     'members' => __DIR__ . '/pages/Members/members.php',
     'members/addMember' => __DIR__ . '/pages/Members/tambah.php',
@@ -46,6 +47,7 @@ $protected_routes = [
     'staff/addStaff' => __DIR__ . '/pages/Staff/tambah.php',
     'staff/editStaff' => __DIR__ . '/pages/Staff/edit.php',
     'staff/deleteStaff' => __DIR__ . '/pages/Staff/hapus.php',
+    'staff/printStaff' => __DIR__ . '/pages/Staff/printStaff.php', // Add print route
     'peminjaman' => __DIR__ . '/pages/Peminjaman/index.php',
     'peminjaman/process' => __DIR__ . '/pages/peminjaman/process.php',
 ];
@@ -99,6 +101,8 @@ $role_routes = [
         'staff/addStaff',
         'staff/editStaff',
         'staff/deleteStaff',
+        'staff/printStaff', // Add print route access
+        'staff/printDashboard', // Add print route access
         'position',
         'position/addPosition',
         'position/editPosition',

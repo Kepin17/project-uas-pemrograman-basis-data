@@ -161,8 +161,7 @@
     <div class="sidebar">
        
         <div class="sidebar-header">
-            <h4>Perpustakaan</h4>
-            <p class="text-white-50">Selamat datang di sistem perpustakaan</p>
+           <img src="images/logo.png" alt="logo " width="200px">
         </div>
         <div class="sidebar-menu">
             <a href="<?php echo BASE_URL; ?>/dashboard" class="menu-item <?php echo $currentPage == 'dashboard' ? 'active' : ''; ?>">

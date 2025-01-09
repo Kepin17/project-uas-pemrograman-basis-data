@@ -4,12 +4,17 @@ $pageTitle = "Pengembalian Buku";
 $currentPage = "returning";
 ob_start();
 
-// Fetch active loans
-$query = "SELECT p.kode_pinjam, m.nama_anggota as nama, b.nama_buku as judul 
+// Fetch active loans with multiple books
+$query = "SELECT p.kode_pinjam, 
+          a.nama_anggota as nama,
+          GROUP_CONCAT(b.nama_buku SEPARATOR ', ') as judul,
+          GROUP_CONCAT(b.id_buku SEPARATOR ', ') as id_buku
           FROM peminjaman p 
-          JOIN anggota m ON p.id_anggota = m.id_anggota 
-          JOIN buku b ON p.id_buku = b.id_buku 
-          WHERE p.status = 'dipinjam' || p.status = 'terlambat'
+          JOIN anggota a ON p.id_anggota = a.id_anggota 
+          LEFT JOIN detail_peminjaman dp ON p.kode_pinjam = dp.kode_pinjam
+          LEFT JOIN buku b ON dp.id_buku = b.id_buku 
+          WHERE p.status = 'DIPINJAM' OR p.status = 'TERLAMBAT'
+          GROUP BY p.kode_pinjam
           ORDER BY p.kode_pinjam DESC";
 $result = $conn->query($query) or die(mysqli_error($conn));
 
@@ -17,12 +22,17 @@ $result = $conn->query($query) or die(mysqli_error($conn));
 $detail_peminjaman = null;
 if (isset($_POST['peminjaman_id'])) {
     $kode_pinjam = $_POST['peminjaman_id'];
-    $query_detail = "SELECT p.*, m.nama_anggota, b.nama_buku,
+    $query_detail = "SELECT p.*, 
+                     a.nama_anggota,
+                     GROUP_CONCAT(b.nama_buku SEPARATOR ', ') as nama_buku,
+                     GROUP_CONCAT(b.id_buku SEPARATOR ', ') as id_buku,
                      DATEDIFF(CURRENT_DATE, p.estimasi_pinjam) as keterlambatan
                      FROM peminjaman p 
-                     JOIN anggota m ON p.id_anggota = m.id_anggota
-                     JOIN buku b ON p.id_buku = b.id_buku
-                     WHERE p.kode_pinjam = ?";
+                     JOIN anggota a ON p.id_anggota = a.id_anggota
+                     LEFT JOIN detail_peminjaman dp ON p.kode_pinjam = dp.kode_pinjam
+                     LEFT JOIN buku b ON dp.id_buku = b.id_buku
+                     WHERE p.kode_pinjam = ?
+                     GROUP BY p.kode_pinjam";
     
     $stmt = $conn->prepare($query_detail);
     $stmt->bind_param("s", $kode_pinjam);
@@ -56,6 +66,12 @@ $denda_per_hari = 5000;
     <div class="card mb-4">
         <div class="card-body">
             <form id="returnForm" method="POST" action="returning/pross">
+            <?php if (isset($_GET['status']) && isset($_GET['message'])): ?>
+                    <div class="alert alert-<?= $_GET['status'] == 'success' ? 'success' : 'danger' ?> alert-dismissible fade show" role="alert">
+                        <?= htmlspecialchars($_GET['message']) ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
@@ -106,20 +122,25 @@ $denda_per_hari = 5000;
                         <?php
                         // Pagination configuration
                         $records_per_page = 5;
-                        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-                        $offset = ($page - 1) * $records_per_page;
-
-                        // Get total records for pagination
                         $total_query = "SELECT COUNT(*) as total FROM pengembalian";
                         $total_result = $conn->query($total_query);
                         $total_records = $total_result->fetch_assoc()['total'];
-                        $total_pages = ceil($total_records / $records_per_page);
+                        $total_pages = max(1, ceil($total_records / $records_per_page));
 
-                        // Modified query with pagination
+                        // Validate and sanitize page number
+                        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                        $page = max(1, min($page, $total_pages)); // Ensure page is between 1 and total_pages
+                        $offset = ($page - 1) * $records_per_page;
+
+                        // Modified query for history with proper GROUP BY
                         $query = "SELECT 
-                                    pb.*,
-                                    m.nama_anggota,
-                                    b.nama_buku,
+                                    pb.kode_pengembalian,
+                                    pb.kode_pinjam,
+                                    pb.tanggal_pengembalian,
+                                    pb.kondisi_buku,
+                                    pb.denda,
+                                    a.nama_anggota,
+                                    GROUP_CONCAT(DISTINCT b.nama_buku SEPARATOR ', ') as nama_buku,
                                     DATEDIFF(pb.tanggal_pengembalian, p.estimasi_pinjam) as hari_terlambat,
                                     CASE 
                                         WHEN DATEDIFF(pb.tanggal_pengembalian, p.estimasi_pinjam) > 0 
@@ -128,24 +149,37 @@ $denda_per_hari = 5000;
                                     END as denda_terlambat
                                   FROM pengembalian pb
                                   JOIN peminjaman p ON pb.kode_pinjam = p.kode_pinjam
-                                  JOIN anggota m ON p.id_anggota = m.id_anggota
-                                  JOIN buku b ON p.id_buku = b.id_buku
+                                  JOIN anggota a ON p.id_anggota = a.id_anggota
+                                  LEFT JOIN detail_peminjaman dp ON p.kode_pinjam = dp.kode_pinjam
+                                  LEFT JOIN buku b ON dp.id_buku = b.id_buku
+                                  GROUP BY pb.kode_pengembalian, 
+                                           pb.kode_pinjam,
+                                           pb.tanggal_pengembalian,
+                                           pb.kondisi_buku,
+                                           pb.denda,
+                                           a.nama_anggota,
+                                           p.estimasi_pinjam
                                   ORDER BY pb.tanggal_pengembalian DESC
-                                  LIMIT $offset, $records_per_page";
+                                  LIMIT ?, ?";
 
-                        $result = $conn->query($query) or die(mysqli_error($conn));
+                        // Use prepared statement for the pagination query
+                        $stmt = $conn->prepare($query);
+                        $stmt->bind_param("ii", $offset, $records_per_page);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
                         while ($row = $result->fetch_assoc()) {
+                            $nama_buku = $row['nama_buku'] ?? 'Data tidak tersedia';
                             $denda = $denda_kondisi[$row['kondisi_buku']];
-                            $total_denda = $denda + $row['denda_terlambat'];
+                            $total_denda = $row['denda'];
                             $status = $row['hari_terlambat'] > 0 
-                                ? "<span class='text-danger'>Terlambat (".$row['hari_terlambat']." hari)</span>" 
+                                ? "<span class='text-danger'>Terlambat ({$row['hari_terlambat']} hari)</span>" 
                                 : "<span class='text-success'>Tepat Waktu</span>";
                         ?>
                             <tr>
                                 <td><?= date('d/m/Y H:i', strtotime($row['tanggal_pengembalian'])) ?></td>
                                 <td><?= htmlspecialchars($row['nama_anggota']) ?></td>
-                                <td><?= htmlspecialchars($row['nama_buku']) ?></td>
+                                <td><?= htmlspecialchars($nama_buku) ?></td>
                                 <td><?= ucfirst($row['kondisi_buku']) ?></td>
                                 <td><?= $status ?></td>
                                 <td>Rp <?= number_format($row['denda'], 0, ',', '.') ?></td>
@@ -176,6 +210,28 @@ $denda_per_hari = 5000;
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Handle status messages from URL parameters
+    <?php if (isset($_GET['status']) && isset($_GET['message'])): ?>
+        <?php if ($_GET['status'] === 'error'): ?>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: '<?= htmlspecialchars($_GET['message']) ?>',
+                confirmButtonColor: '#dc3545'
+            });
+        <?php elseif ($_GET['status'] === 'success'): ?>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '<?= htmlspecialchars($_GET['message']) ?>',
+                confirmButtonColor: '#28a745'
+            });
+        <?php endif; ?>
+    <?php endif; ?>
+</script>
 
 <script src="<?= BASE_URL ?>/assets/js/pengembalian.js"></script>
 

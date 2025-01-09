@@ -3,6 +3,9 @@ require "config/connection.php";
 $pageTitle = "Staff Perpustakaan";
 $currentPage = 'staff';
 
+// Remove session_start() since it's already called in the main layout or config
+$isHeadLibrarian = isset($_SESSION['id_jabatan']) && $_SESSION['id_jabatan'] === 'JB001';
+
 $search = isset($_GET['search']) ? $conn->real_escape_string(trim($_GET['search'])) : '';
 $successMessage = isset($_GET['success']) ? $_GET['success'] : '';
 
@@ -74,9 +77,19 @@ ob_start();
 
 <div class="main-header d-flex justify-content-between align-items-center">
     <h4 class="mb-0">Petugas Perpustakaan</h4>
-    <a href="<?php echo BASE_URL; ?>/staff/addStaff" class="btn btn-pink" onclick="return confirmAction('add', '<?php echo BASE_URL; ?>/staff/addStaff');">
-        <i class="fas fa-plus me-2"></i>Tambah Petugas
-    </a>
+    <div>
+        <?php if ($isHeadLibrarian): ?>
+            <div class="btn-group me-2">
+            <a href="staff/printStaff" class="btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-print fa-sm text-white-50 me-2"></i>Cetak Laporan
+        </a>
+              
+            </div>
+        <?php endif; ?>
+        <a href="<?php echo BASE_URL; ?>/staff/addStaff" class="btn btn-pink" onclick="return confirmAction('add', '<?php echo BASE_URL; ?>/staff/addStaff');">
+            <i class="fas fa-plus me-2"></i>Tambah Petugas
+        </a>
+    </div>
 </div>
 
 <div class="card my-3">

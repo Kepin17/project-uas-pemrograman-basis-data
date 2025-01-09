@@ -1,6 +1,7 @@
--- Active: 1734660316584@@127.0.0.1@3306@manajemen_perpustakaan
+-- Active: 1736158449543@@127.0.0.1@3306@manajemen_perpustakaan
 CREATE DATABASE manajemen_perpustakaan;
 USE manajemen_perpustakaan;
+-- drop database manajemen_perpustakaan;
 
 CREATE TABLE ANGGOTA (
     id_anggota VARCHAR(6) UNIQUE NOT NULL PRIMARY KEY,
@@ -111,12 +112,12 @@ ADD lokasi VARCHAR(50);
 desc RAK_BUKU;
 
 -- Drop existing DETAIL_PEMINJAMAN table and its triggers
-DROP TABLE IF EXISTS DETAIL_PEMINJAMAN;
-DROP TRIGGER IF EXISTS after_detail_pinjam_insert;
-DROP TRIGGER IF EXISTS before_detail_pinjam_insert;
+-- DROP TABLE IF EXISTS DETAIL_PEMINJAMAN;
+-- DROP TRIGGER IF EXISTS after_detail_pinjam_insert;
+-- DROP TRIGGER IF EXISTS before_detail_pinjam_insert;
 
 -- Modify PEMINJAMAN table to include id_buku
-DROP TABLE IF EXISTS PEMINJAMAN;
+-- DROP TABLE IF EXISTS PEMINJAMAN;
 CREATE TABLE PEMINJAMAN (
     kode_pinjam VARCHAR(6) UNIQUE NOT NULL PRIMARY KEY,
     id_anggota VARCHAR(6),
@@ -202,12 +203,14 @@ BEGIN
 END//
 DELIMITER ;
 
+-- drop table detail_peminjaman;
 
 CREATE TABLE DETAIL_PEMINJAMAN (
     id INT AUTO_INCREMENT PRIMARY KEY,
     kode_pinjam VARCHAR(6),
     id_buku VARCHAR(6),
     kondisi_buku_pinjam ENUM('bagus', 'rusak') NOT NULL DEFAULT 'bagus',
+    jumlah INT NOT NULL DEFAULT 1,
     FOREIGN KEY (kode_pinjam) REFERENCES PEMINJAMAN(kode_pinjam) ON DELETE CASCADE,
     FOREIGN KEY (id_buku) REFERENCES BUKU(id_buku) ON DELETE CASCADE
 );
