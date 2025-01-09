@@ -1,4 +1,9 @@
 <?php
+// Remove duplicate autoload if it exists here
+
+// Move app_config require to top
+require_once __DIR__ . "/app_config.php";
+
 // Detect protocol (http/https)
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
 
@@ -17,6 +22,7 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'manajemen_perpustakaan');
 
+
 // get current Page
 $request_uri = $_SERVER['REQUEST_URI'];
 $base_url_path = parse_url(BASE_URL, PHP_URL_PATH);
@@ -30,5 +36,4 @@ if (empty($current_path)) {
 
 define('CURRENT_PAGE', $current_path);
 
-require_once "app_config.php"
 ?>

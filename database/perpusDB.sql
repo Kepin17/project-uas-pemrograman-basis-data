@@ -26,6 +26,7 @@ CREATE TABLE PETUGAS (
     CONSTRAINT CheckTabelPetugas2 CHECK (id_petugas REGEXP "^PG[0-9]{3}$")
 
 );
+ALTER TABLE PETUGAS ADD COLUMN remember_token VARCHAR(64) NULL;
 
 ALTER TABLE PETUGAS
 ADD id_jabatan VARCHAR(6);
@@ -241,3 +242,14 @@ END//
 DELIMITER ;
 
 
+CREATE TABLE otp_login (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(255),
+    otp VARCHAR(6),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP,
+    is_used BOOLEAN DEFAULT FALSE
+);
+
+ALTER TABLE otp_login
+ADD COLUMN used TINYINT(1) DEFAULT 0 AFTER expires_at;

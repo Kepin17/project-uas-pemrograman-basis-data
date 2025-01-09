@@ -1,11 +1,7 @@
 <?php
 require_once('config/connection.php');
 
-// Check if user has position JB001
-if (!isset($_SESSION['id_jabatan']) || $_SESSION['id_jabatan'] !== 'JB001') {
-    header('Location: unauthorized.php');
-    exit();
-}
+
 
 // Count queries
 $totalBooksQuery = "SELECT COUNT(*) as total FROM buku";

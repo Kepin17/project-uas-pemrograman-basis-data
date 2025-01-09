@@ -148,6 +148,7 @@ $routes = [
     'login' => __DIR__ . '/pages/Auth/Login/login.php',
     'register' => __DIR__ . '/pages/Auth/Register/register.php', 
     'register/process' => __DIR__ . '/pages/Auth/Register/process_register.php', 
+    'login/verify-email-otp' => __DIR__ . '/pages/Auth/Login/verify-email-otp.php', 
     'login/process' => __DIR__ . '/pages/Auth/Login/process_login.php',
     'login/forgot-password' => __DIR__ . '/pages/Auth/ForPass/forgot_pass.php',
     'login/verify-otp' => __DIR__ . '/pages/Auth/ForPass/verify-otp.php', 

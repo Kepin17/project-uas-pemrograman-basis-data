@@ -60,9 +60,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Konten Email
             $mail->isHTML(true);
-            $mail->Subject = 'Your OTP Code';
-            $mail->Body    = "Your OTP is: <b>$otp</b>. It will expire in 15 minutes.";
-            $mail->AltBody = "Your OTP is: $otp. It will expire in 15 minutes.";
+            $mail->Subject = 'Reset Password - Sistem Informasi Perpustakaan';
+            
+            // Modern HTML email template
+            $emailTemplate = "
+            <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;'>
+                <div style='text-align: center; margin-bottom: 20px;'>
+                    <h2 style='color: #333;'>Reset Password</h2>
+                </div>
+                
+                <div style='margin-bottom: 20px;'>
+                    <p style='color: #555; font-size: 16px;'>Yth. Pengguna,</p>
+                    <p style='color: #555; font-size: 16px;'>Kami menerima permintaan reset password untuk akun Anda. Gunakan kode OTP berikut untuk melanjutkan proses reset password:</p>
+                </div>
+
+                <div style='background-color: #f8f9fa; padding: 15px; text-align: center; margin-bottom: 20px; border-radius: 5px;'>
+                    <span style='font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #007bff;'>{$otp}</span>
+                </div>
+
+                <div style='margin-bottom: 20px;'>
+                    <p style='color: #555; font-size: 14px;'>Kode OTP ini akan kadaluarsa dalam 15 menit.</p>
+                    <p style='color: #555; font-size: 14px;'>Jika Anda tidak merasa melakukan permintaan reset password, silakan abaikan email ini atau segera hubungi administrator sistem.</p>
+                </div>
+
+                <div style='background-color: #fff8e1; padding: 15px; border-radius: 5px; margin-bottom: 20px;'>
+                    <p style='color: #876d00; font-size: 14px; margin: 0;'>
+                        <strong>Peringatan Keamanan:</strong> Jangan pernah membagikan kode OTP ini kepada siapapun, termasuk pihak yang mengaku sebagai staf perpustakaan.
+                    </p>
+                </div>
+
+                <div style='border-top: 1px solid #ddd; padding-top: 15px; margin-top: 20px;'>
+                    <p style='color: #777; font-size: 12px; text-align: center;'>Email ini dikirim secara otomatis. Mohon tidak membalas email ini.</p>
+                    <p style='color: #777; font-size: 12px; text-align: center;'>Sistem Informasi Perpustakaan &copy; " . date('Y') . "</p>
+                </div>
+            </div>";
+
+            $mail->Body = $emailTemplate;
+            $mail->AltBody = "Kode OTP untuk reset password Anda adalah: $otp\nKode ini akan kadaluarsa dalam 15 menit.\nJangan bagikan kode ini kepada siapapun.";
 
             // Kirim Email
             $mail->send();
